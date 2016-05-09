@@ -116,6 +116,17 @@ public:
   bool set_field(const span field, const span value);
 
   //-----------------------------------------------
+  // Check to see if the specified field is a
+  // member of the set
+  //
+  // @param field - The field name
+  //
+  // @return - true if the field is a member,
+  //           false otherwise
+  //-----------------------------------------------
+  bool has_field(const char* field) const noexcept;
+
+  //-----------------------------------------------
   // Get the value associated with a field
   //
   // Should call <has_field> before calling this
@@ -126,17 +137,6 @@ public:
   //           specified field name
   //-----------------------------------------------
   const span get_value(const char* field) const noexcept;
-
-  //-----------------------------------------------
-  // Check to see if the specified field is a
-  // member of the set
-  //
-  // @param field - The field name
-  //
-  // @return - true if the field is a member,
-  //           false otherwise
-  //-----------------------------------------------
-  bool has_field(const char* field) const noexcept;
 
   //-----------------------------------------------
   // Check to see if the set is empty
@@ -228,20 +228,20 @@ inline bool Header::set_field(const span field, const span value) {
   else return add_field(field, value);
 }
 
-inline const span Header::get_value(const char* field) const noexcept {
-  auto field_length = strlen(field);
-  //-----------------------------------
-  if (field_length == 0) return {"", 0};
-  //-----------------------------------
-  return find({field, field_length})->second;
-}
-
 inline bool Header::has_field(const char* field) const noexcept {
   auto field_length = strlen(field);
   //-----------------------------------
   if (field_length == 0) return false;
   //-----------------------------------
   return find({field, field_length}) not_eq map_.end();
+}
+
+inline const span Header::get_value(const char* field) const noexcept {
+  auto field_length = strlen(field);
+  //-----------------------------------
+  if (field_length == 0) return {"", 0};
+  //-----------------------------------
+  return find({field, field_length})->second;
 }
 
 inline bool Header::is_empty() const noexcept {
