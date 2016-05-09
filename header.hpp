@@ -286,8 +286,8 @@ inline Header::Const_Iterator Header::find(const span field) const noexcept {
 
 inline std::ostream& operator << (std::ostream& output_device, const Header& header) {
   for (const auto& field : header.map_) {
-    output_device << std::string{field.first.data, field.first.len}   << ": "
-                  << std::string{field.second.data, field.second.len} << "\r\n";
+    output_device << field.first  << ": "
+                  << field.second << "\r\n";
   }
   //-----------------------------------
   return output_device << "\r\n";

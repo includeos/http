@@ -18,6 +18,9 @@
 #ifndef HTTP_SPAN_HPP
 #define HTTP_SPAN_HPP
 
+#include <string>
+#include <ostream>
+
 //-----------------------------------------------
 // This is a lightweight data-structure to be
 // used within the http package
@@ -46,6 +49,14 @@ inline bool empty(const span& span) noexcept {
 inline bool operator==(const span& lhs, const span& rhs) noexcept {
   if (lhs.len not_eq rhs.len) return false;
   return strncmp(lhs.data, rhs.data, lhs.len) == 0;
+}
+
+//-----------------------------------------------
+// Operator to stream the contents of a span to
+// an output device
+//-----------------------------------------------
+inline std::ostream& operator << (std::ostream& output_device, const span span) {
+  return output_device << std::string{span.data, span.len};
 }
 
 #endif //< HTTP_SPAN_HPP
