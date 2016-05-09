@@ -27,36 +27,36 @@ span field;
 span value;
 
 int on_field(http_parser* parser, const char* at, size_t length) {
-	(void)parser;
-	field.data = at;
-	field.len = length;
-	return 0;
+  (void)parser;
+  field.data = at;
+  field.len = length;
+  return 0;
 }
 
 int on_value(http_parser* parser, const char* at, size_t length) {
-	(void)parser;
-	value.data = at;
-	value.len = length;
+  (void)parser;
+  value.data = at;
+  value.len = length;
 
-	headers.add_field(field, value);
-	return 0;
+  headers.add_field(field, value);
+  return 0;
 }
 
 int main() {
 
-	http_parser parser;
-	http_parser_init(&parser, HTTP_REQUEST);
+  http_parser parser;
+  http_parser_init(&parser, HTTP_REQUEST);
 
-	http_parser_settings settings;
-	http_parser_settings_init(&settings);
-	settings.on_header_field = on_field;
-	settings.on_header_value = on_value;
+  http_parser_settings settings;
+  http_parser_settings_init(&settings);
+  settings.on_header_field = on_field;
+  settings.on_header_value = on_value;
 
-	const char* request = "GET /q?install=yes&machine=x86 HTTP/1.1\r\n"
-	                      "Host: 128.39.120.91:8081\r\n"
-	                      "Accept: text/html\r\n\r\n";
+  const char* request = "GET /q?install=yes&machine=x86 HTTP/1.1\r\n"
+                        "Host: 128.39.120.91:8081\r\n"
+                        "Accept: text/html\r\n\r\n";
 
-	http_parser_execute(&parser, &settings, request, strlen(request));
+  http_parser_execute(&parser, &settings, request, strlen(request));
 
-	std::cout << headers;
+  std::cout << headers;
 }
