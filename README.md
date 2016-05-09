@@ -1,2 +1,2 @@
-# HEADER-PARSER-TEST
-HTTP Headers Parsing Test
+# HTTP-PARSER-TEST
+HTTP Parsing Test: using [http_parser](https://github.com/nodejs/http-parser)
