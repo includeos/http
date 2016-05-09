@@ -45,9 +45,9 @@ private:
   //-----------------------------------------------
   // Internal class type aliases
   //-----------------------------------------------
-  using Map_Type  = std::pair<span, span>;
-  using Field_Map = std::list<Map_Type>;
-  using Const_Iterator  = Field_Map::const_iterator;
+  using Map_Type       = std::pair<span, span>;
+  using Field_Map      = std::list<Map_Type>;
+  using Const_Iterator = Field_Map::const_iterator;
   //-----------------------------------------------
 public:
   //-----------------------------------------------
@@ -125,7 +125,7 @@ public:
   // @return - The value associated with the
   //           specified field name
   //-----------------------------------------------
-  const span& get_value(const char* field) const noexcept;
+  const span get_value(const char* field) const noexcept;
 
   //-----------------------------------------------
   // Check to see if the specified field is a
@@ -224,10 +224,11 @@ inline bool Header::set_field(const span field, const span value) {
     const_cast<span&>(target->second).len  = value.len;
     return true;
   }
+  //-----------------------------------
   else return add_field(field, value);
 }
 
-inline const span& Header::get_value(const char* field) const noexcept {
+inline const span Header::get_value(const char* field) const noexcept {
   auto field_length = strlen(field);
   //-----------------------------------
   if (field_length == 0) return {"", 0};
@@ -276,7 +277,7 @@ inline Header::Const_Iterator Header::find(const span field) const noexcept {
   if (empty(field)) return map_.end();
   //-----------------------------------
   return
-  std::find_if(map_.begin(), map_.end(), [&field](const Header::Map_Type& f){
+  std::find_if(map_.begin(), map_.end(), [&field](const auto& f){
     return string_to_lower_case({f.first.data, f.first.len})
            ==
            string_to_lower_case({field.data, field.len});
