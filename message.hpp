@@ -83,6 +83,17 @@ public:
   Message& add_header(const char* field, const char* value);
 
   //----------------------------------------
+  // Add a new field to the current set of
+  // headers
+  //
+  // @param field - The field name
+  // @param value - The field value
+  //
+  // @return - The object that invoked this method
+  //----------------------------------------
+  Message& add_header(const span field, const span value);
+
+  //----------------------------------------
   // Change the value of the specified field
   //
   // If the field is absent from the message it
@@ -94,17 +105,6 @@ public:
   // @return - The object that invoked this method
   //----------------------------------------
   Message& set_header(const char* field, const char* value);
-
-  //----------------------------------------
-  // Add a new field to the current set of
-  // headers
-  //
-  // @param field - The field name
-  // @param value - The field value
-  //
-  // @return - The object that invoked this method
-  //----------------------------------------
-  Message& add_header(const span field, const span value);
 
   //----------------------------------------
   // Change the value of the specified field
@@ -310,7 +310,7 @@ inline bool Message::has_body() const noexcept {
   return message_body_.empty();
 }
 
-const Message::Message_Body& Message::get_body() const noexcept {
+inline const Message::Message_Body& Message::get_body() const noexcept {
   return message_body_;
 }
 
