@@ -31,6 +31,22 @@
 struct span {
   const char* data;
   size_t      len;
+
+  //-----------------------------------
+  // Get a string representation of this
+  // data-structure
+  //
+  // @return - A string representation
+  //-----------------------------------
+  std::string to_string() const
+  { return *this; }
+
+  //-----------------------------------------------
+  // Operator to transform this data-structure
+  // into string form
+  //-----------------------------------------------
+  operator std::string () const
+  { return std::string{data, len}; }
 }; //< struct span
 
 //-----------------------------------------------
@@ -38,13 +54,13 @@ struct span {
 // which mean it doesn't represent a token
 //-----------------------------------------------
 inline bool empty(const span& span) noexcept {
-  return span.len == 0;
+  return span.data == nullptr or span.len == 0;
 }
 
 //-----------------------------------------------
 // Operator to check if two spans are equal to
 // each other, which mean that they represent the
-// same token
+// similar tokens
 //-----------------------------------------------
 inline bool operator==(const span& lhs, const span& rhs) noexcept {
   if (lhs.len not_eq rhs.len) return false;
@@ -55,7 +71,7 @@ inline bool operator==(const span& lhs, const span& rhs) noexcept {
 // Operator to stream the contents of a span to
 // an output device
 //-----------------------------------------------
-inline std::ostream& operator << (std::ostream& output_device, const span span) {
+inline std::ostream& operator << (std::ostream& output_device, const span& span) {
   return output_device << std::string{span.data, span.len};
 }
 
