@@ -59,7 +59,7 @@ inline bool empty(const span& span) noexcept {
 
 //-----------------------------------------------
 // Operator to check if two spans are equal to
-// each other, which mean that they represent the
+// each other, which mean that they represent
 // similar tokens
 //-----------------------------------------------
 inline bool operator==(const span& lhs, const span& rhs) noexcept {
