@@ -188,7 +188,7 @@ private:
 
   //-----------------------------------------------
   // Operator to stream the contents of the set
-  // into the specified output stream device
+  // into the specified output device
   //
   // The format is as follows:
   // field : value "\r\n"
@@ -239,7 +239,7 @@ inline bool Header::has_field(const char* field) const noexcept {
 inline const span Header::get_value(const char* field) const noexcept {
   auto field_length = strlen(field);
   //-----------------------------------
-  if (field_length == 0) return {"", 0};
+  if (field_length == 0) return {nullptr, 0};
   //-----------------------------------
   return find({field, field_length})->second;
 }
