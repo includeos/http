@@ -53,7 +53,7 @@ int main() {
   settings.on_header_value = on_value;
 
   const char* request = "GET /q?install=yes&machine=x86 HTTP/1.1\r\n"
-                        "Host: 128.39.120.91:8081\r\n"
+                        "Host: 128.39.120.91:4300\r\n"
                         "Accept: text/html\r\n\r\n";
 
   http_parser_execute(&parser, &settings, request, strlen(request));
