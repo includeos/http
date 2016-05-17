@@ -19,12 +19,23 @@
 #define HTTP_COMMON_HPP
 
 #include <string>
+#include <memory>
+#include <cstdint>
+
+#include <http_parser.h>
 
 namespace http {
 
 using URI     = std::string;
-
 using Limit   = std::size_t;
+
+using buffer_t = std::shared_ptr<uint8_t>;
+
+class Request;
+using Request_ptr = std::shared_ptr<Request>;
+
+class Response;
+using Response_ptr = std::shared_ptr<Response>;
 
 } //< namespace http
 

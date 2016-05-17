@@ -1,0 +1,291 @@
+// This file is a part of the IncludeOS unikernel - www.includeos.org
+//
+// Copyright 2015-2016 Oslo and Akershus University College of Applied Sciences
+// and Alfred Bratterud
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef HTTP_RESPONSE_HPP
+#define HTTP_RESPONSE_HPP
+
+#include "message.hpp"
+#include "version.hpp"
+#include "status_codes.hpp"
+#include "status_code_constants.hpp"
+
+namespace http {
+
+//--------------------------------
+// This class is used to represent
+// an http response message
+//--------------------------------
+class Response : public Message {
+public:
+  //------------------------------
+  // Constructor to set up a response
+  // by providing information for the
+  // status line of the response message
+  //
+  // @param code    - The status code
+  // @param version - The version of the message
+  //------------------------------
+  explicit Response(const Code code = OK, const Version version = Version{1U, 1U}) noexcept;
+
+  //----------------------------------------
+  // Constructor to construct a response
+  // message from the incoming character
+  // stream of data which is a C-String
+  //
+  // @param response - The character stream of data
+  //
+  // @param limit - Capacity of how many fields can
+  //                be added
+  //----------------------------------------
+  explicit Response(const char* response, const size_t length, const Limit limit = 100);
+
+  //----------------------------------------
+  // Constructor to construct a response
+  // message from the incoming character
+  // stream of data which is a <std::string>
+  // object
+  //
+  // @param response - The character stream of data
+  //
+  // @param limit - Capacity of how many fields can
+  //                be added
+  //----------------------------------------
+  explicit Response(std::string response, const Limit limit = 100);
+
+  //----------------------------------------
+  // Default copy constructor
+  //----------------------------------------
+  Response(const Response&) = default;
+
+  //----------------------------------------
+  // Default move constructor
+  //----------------------------------------
+  Response(Response&&) = default;
+
+  //------------------------------
+  // Default destructor
+  //------------------------------
+  ~Response() noexcept = default;
+
+  //----------------------------------------
+  // Default copy assignment operator
+  //----------------------------------------
+  Response& operator = (const Response&) = default;
+
+  //----------------------------------------
+  // Default move assignment operator
+  //----------------------------------------
+  Response& operator = (Response&&) = default;
+
+  //------------------------------
+  // Get the status code of this
+  // message
+  //
+  // @return - The status code of this
+  //           message
+  //------------------------------
+  Code status_code() const noexcept;
+
+  //------------------------------
+  // Change the status code of this
+  // message
+  //
+  // @param code - The new status code to set
+  //               on this message
+  //
+  // @return - The object that invoked this method
+  //------------------------------
+  Response& set_status_code(const Code code) noexcept;
+
+  //----------------------------------------
+  // Get the version of the response message
+  //
+  // @return - The version of the response
+  //----------------------------------------
+  const Version version() const noexcept;
+
+  //----------------------------------------
+  // Set the version of the response message
+  //
+  // @param version - The version to set
+  //
+  // @return - The object that invoked this
+  //           method
+  //----------------------------------------
+  Response& set_version(const Version version) noexcept;
+
+  //----------------------------------------
+  // Reset the response message as if it was now
+  // default constructed
+  //
+  // @return - The object that invoked this method
+  //----------------------------------------
+  virtual Response& reset() noexcept override;
+  
+  //-----------------------------------
+  // Get a string representation of this
+  // class
+  //
+  // @return - A string representation
+  //-----------------------------------
+  virtual std::string to_string() const override;
+
+  //-----------------------------------
+  // Operator to transform this class
+  // into string form
+  //-----------------------------------
+  operator std::string () const;
+  //-----------------------------------
+private:
+  //------------------------------
+  // Class data members
+  //------------------------------
+  const std::string response_;
+  span              field_;
+
+  //----------------------------------------
+  // Status-line parts
+  //----------------------------------------
+  Code    code_;
+  Version version_;
+
+  //----------------------------------------
+  // Private response parser
+  //----------------------------------------
+  http_parser          parser_;
+  http_parser_settings settings_;
+
+  //----------------------------------------
+  // Configure the parser settings
+  //
+  // @return - The object that invoked this
+  //           method
+  //----------------------------------------
+  Response& configure_settings() noexcept;
+
+  //----------------------------------------
+  // Execute the parser
+  //----------------------------------------
+  void execute_parser() noexcept;
+}; //< class Response
+
+/**--v----------- Implementation Details -----------v--**/
+
+inline Response::Response(const Code code, const Version version) noexcept
+  : code_{code}
+  , version_{version}
+{}
+
+inline Response::Response(const char* response, const size_t length, const Limit limit)
+  : Response{{response, length}, limit}
+{}
+
+inline Response::Response(std::string response, const Limit limit)
+  : Message{limit}
+  , response_{std::move(response)}
+  , field_{nullptr, 0}
+{
+  configure_settings()
+  .execute_parser();
+}
+
+inline Code Response::status_code() const noexcept {
+  return code_;
+}
+
+inline Response& Response::set_status_code(const Code code) noexcept {
+  code_ = code;
+  return *this;
+}
+
+inline const Version Response::version() const noexcept {
+  return version_;
+}
+
+inline Response& Response::set_version(const Version version) noexcept {
+  version_ = version;
+  return *this;
+}
+
+inline Response& Response::reset() noexcept {
+  Message::reset();
+  return set_status_code(OK);
+}
+
+inline std::string Response::to_string() const {
+  return *this;
+}
+
+inline Response::operator std::string () const {
+  return response_;
+}
+
+inline Response& Response::configure_settings() noexcept {
+  http_parser_settings_init(&settings_);
+
+  settings_.on_header_field = [](http_parser* parser, const char* at, size_t length) {
+    auto res = reinterpret_cast<Response*>(parser->data);
+    res->field_.data = at;
+    res->field_.len  = length;
+    return 0;
+  };
+
+  settings_.on_header_value = [](http_parser* parser, const char* at, size_t length) {
+    auto res = reinterpret_cast<Response*>(parser->data);
+    res->add_header(res->field_, {at, length});
+    return 0;
+  };
+
+  settings_.on_body = [](http_parser* parser, const char* at, size_t length) {
+    auto res = reinterpret_cast<Response*>(parser->data);
+    res->add_body({at, length});
+    return 0;
+  };
+
+  settings_.on_headers_complete = [](http_parser* parser) {
+    auto res = reinterpret_cast<Response*>(parser->data);
+    res->version_ = Version{parser->http_major, parser->http_minor};
+    res->code_    = static_cast<status_t>(parser->status_code);
+    return 0;
+  };
+
+  return *this;
+}
+
+inline void Response::execute_parser() noexcept {
+  http_parser_init(&parser_, HTTP_RESPONSE);
+  parser_.data = this;
+  http_parser_execute(&parser_, &settings_, response_.data(), response_.size());
+}
+
+inline std::ostream& operator << (std::ostream& output_device, const Response& res) {
+  return output_device << res.to_string();
+}
+
+inline Response_ptr make_response(buffer_t buf, const size_t len) {
+  return std::make_shared<Response>(reinterpret_cast<char*>(buf.get()), len);
+}
+
+inline Response_ptr make_response(std::string response) {
+  return std::make_shared<Response>(std::move(response));
+}
+
+/**--^----------- Implementation Details -----------^--**/
+
+} //< namespace http
+
+#endif //< HTTP_RESPONSE_HPP

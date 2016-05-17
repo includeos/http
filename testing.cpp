@@ -18,16 +18,31 @@
 #include <iostream>
 
 #include <request.hpp>
+#include <response.hpp>
 
 int main() {
 
-  const char* request = "GET /q?install=yes&machine=x86 HTTP/1.1\r\n"
-                        "Host: 128.39.120.91:4300\r\n"
-                        "Accept: text/html\r\n\r\n";
+  using namespace std;
 
-  http::Request req {request};
+  //--------------------------------------------------------------
+  // Request
+  //--------------------------------------------------------------
+  auto ingress = "GET /q?install=yes&machine=x86 HTTP/1.1\r\n"
+                 "Host: 128.39.120.91:4300\r\n"
+                 "Accept: text/html\r\n\r\n"s;
 
-  req.add_body({"Testing 123...", 14});
+  auto req = http::make_request(move(ingress));
 
-  std::cout << req;
+  std::cout << req->method() << '\n';
+
+  //--------------------------------------------------------------
+  // Response
+  //--------------------------------------------------------------
+  auto egress = "HTTP/1.1 200 OK\r\n"
+                "Server: IncludeOS/Acorn\r\n\r\n"s;
+
+  auto res = http::make_response(move(egress));
+
+  std::cout << res->version() << " " << res->status_code() << '\n'
+            << res->header_value("Server") << '\n';
 }
