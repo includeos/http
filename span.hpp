@@ -32,6 +32,31 @@ struct span {
   const char* data;
   size_t      len;
 
+  //-----------------------------------------------
+  // Operator to check if two spans are equal to
+  // each other, which mean that they represent
+  // similar tokens
+  //-----------------------------------------------
+  bool operator==(const span& other) const noexcept {
+    if (len not_eq other.len) return false;
+    return strncmp(data, other.data, other.len) == 0;
+  }
+
+  //-----------------------------------------------
+  // Method to check if a span has no information,
+  // which mean it doesn't represent a token
+  //-----------------------------------------------
+  bool is_empty() const noexcept {
+    return data == nullptr or len == 0;
+  }
+
+  //-----------------------------------------------
+  // Method to change the state of this
+  // data-structure to empty
+  //-----------------------------------------------
+  void clear() noexcept
+  { data = nullptr; len = 0; }
+
   //-----------------------------------
   // Get a string representation of this
   // data-structure
@@ -50,29 +75,11 @@ struct span {
 }; //< struct span
 
 //-----------------------------------------------
-// Function to check if a span has no information,
-// which mean it doesn't represent a token
-//-----------------------------------------------
-inline bool empty(const span& span) noexcept {
-  return span.data == nullptr or span.len == 0;
-}
-
-//-----------------------------------------------
-// Operator to check if two spans are equal to
-// each other, which mean that they represent
-// similar tokens
-//-----------------------------------------------
-inline bool operator==(const span& lhs, const span& rhs) noexcept {
-  if (lhs.len not_eq rhs.len) return false;
-  return strncmp(lhs.data, rhs.data, lhs.len) == 0;
-}
-
-//-----------------------------------------------
 // Operator to stream the contents of a span to
 // an output device
 //-----------------------------------------------
 inline std::ostream& operator << (std::ostream& output_device, const span& span) {
-  return output_device << std::string{span.data, span.len};
+  return output_device << span.to_string();
 }
 
 #endif //< HTTP_SPAN_HPP

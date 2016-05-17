@@ -17,48 +17,17 @@
 
 #include <iostream>
 
-#include <message.hpp>
-
-#include <http_parser.h>
-
-http::Message message;
-
-span field;
-span value;
-
-int on_field(http_parser* parser, const char* at, size_t length) {
-  (void)parser;
-  field.data = at;
-  field.len = length;
-  return 0;
-}
-
-int on_value(http_parser* parser, const char* at, size_t length) {
-  (void)parser;
-  value.data = at;
-  value.len = length;
-
-  message.add_header(field, value);
-  return 0;
-}
+#include <request.hpp>
 
 int main() {
-
-  http_parser parser;
-  http_parser_init(&parser, HTTP_REQUEST);
-
-  http_parser_settings settings;
-  http_parser_settings_init(&settings);
-  settings.on_header_field = on_field;
-  settings.on_header_value = on_value;
 
   const char* request = "GET /q?install=yes&machine=x86 HTTP/1.1\r\n"
                         "Host: 128.39.120.91:4300\r\n"
                         "Accept: text/html\r\n\r\n";
 
-  http_parser_execute(&parser, &settings, request, strlen(request));
+  http::Request req {request};
 
-  message.add_body("Testing 123...");
+  req.add_body({"Testing 123...", 14});
 
-  std::cout << message;
+  std::cout << req;
 }

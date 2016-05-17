@@ -28,8 +28,9 @@ class Message {
 private:
   //----------------------------------------
   // Internal class type aliases
+  //----------------------------------------
   using HSize        = Limit;
-  using Message_Body = std::string;
+  using Message_Body = span;
   //----------------------------------------
 public:
   //----------------------------------------
@@ -91,7 +92,7 @@ public:
   //
   // @return - The object that invoked this method
   //----------------------------------------
-  Message& add_header(const span field, const span value);
+  Message& add_header(const span& field, const span& value);
 
   //----------------------------------------
   // Change the value of the specified field
@@ -117,7 +118,7 @@ public:
   //
   // @return - The object that invoked this method
   //----------------------------------------
-  Message& set_header(const span field, const span value);
+  Message& set_header(const span& field, const span& value);
 
   //----------------------------------------
   // Check if the specified field is within
@@ -248,7 +249,7 @@ private:
 
 inline Message::Message(const Limit limit) noexcept:
   header_fields_{limit},
-  message_body_{}
+  message_body_{nullptr, 0}
 {}
 
 inline Message& Message::add_header(const char* field, const char* value) {
@@ -261,12 +262,12 @@ inline Message& Message::set_header(const char* field, const char* value) {
   return *this;
 }
 
-inline Message& Message::add_header(const span field, const span value) {
+inline Message& Message::add_header(const span& field, const span& value) {
   header_fields_.add_field(field, value);
   return *this;
 }
 
-inline Message& Message::set_header(const span field, const span value) {
+inline Message& Message::set_header(const span& field, const span& value) {
   header_fields_.set_field(field, value);
   return *this;
 }
@@ -298,16 +299,16 @@ inline Message& Message::clear_headers() noexcept {
 }
 
 inline Message& Message::add_body(const Message_Body& message_body) {
-  if (message_body.empty()) return *this;
+  if (message_body.is_empty()) return *this;
   //-----------------------------------
   message_body_ = message_body;
   //-----------------------------------
   return add_header(header_fields::Entity::Content_Length.c_str(),
-                    std::to_string(message_body_.size()).c_str());
+                    std::to_string(message_body_.len).c_str());
 }
 
 inline bool Message::has_body() const noexcept {
-  return message_body_.empty();
+  return not message_body_.is_empty();
 }
 
 inline const Message::Message_Body& Message::get_body() const noexcept {

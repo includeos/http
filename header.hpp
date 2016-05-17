@@ -99,7 +99,7 @@ public:
   // @return - true if the field was added, false
   //           otherwise
   //-----------------------------------------------
-  bool add_field(const span field, const span value);
+  bool add_field(const span& field, const span& value);
 
   //-----------------------------------------------
   // Change the value of the specified field
@@ -113,7 +113,7 @@ public:
   //
   // @return - true if successful, false otherwise
   //-----------------------------------------------
-  bool set_field(const span field, const span value);
+  bool set_field(const span& field, const span& value);
 
   //-----------------------------------------------
   // Check to see if the specified field is a
@@ -184,7 +184,7 @@ private:
   //           else location to the end of the
   //           sequence
   //-----------------------------------------------
-  Const_Iterator find(const span field) const noexcept;
+  Const_Iterator find(const span& field) const noexcept;
 
   //-----------------------------------------------
   // Operator to stream the contents of the set
@@ -203,8 +203,8 @@ inline Header::Header(const Limit limit) noexcept {
   limit_ = limit;
 }
 
-inline bool Header::add_field(const span field, const span value) {
-  if (empty(field)) return false;
+inline bool Header::add_field(const span& field, const span& value) {
+  if (field.is_empty()) return false;
   //-----------------------------------
   if (size() < limit_) {
     map_.emplace_back(field, value);
@@ -214,8 +214,8 @@ inline bool Header::add_field(const span field, const span value) {
   return false;
 }
 
-inline bool Header::set_field(const span field, const span value) {
-  if (empty(field) || empty(value)) return false;
+inline bool Header::set_field(const span& field, const span& value) {
+  if (field.is_empty() || value.is_empty()) return false;
   //-----------------------------------
   auto target = find(field);
   //-----------------------------------
@@ -273,8 +273,8 @@ inline static std::string string_to_lower_case(std::string string) {
   return string;
 }
 
-inline Header::Const_Iterator Header::find(const span field) const noexcept {
-  if (empty(field)) return map_.end();
+inline Header::Const_Iterator Header::find(const span& field) const noexcept {
+  if (field.is_empty()) return map_.end();
   //-----------------------------------
   return
   std::find_if(map_.begin(), map_.end(), [&field](const auto& f){

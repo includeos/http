@@ -23,7 +23,6 @@
 namespace http {
 
 using URI     = std::string;
-using Method  = std::string;
 
 using Limit   = std::size_t;
 
