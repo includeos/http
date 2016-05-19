@@ -23,7 +23,7 @@ namespace http {
 ///////////////////////////////////////////////////////////////////////////////
 Message::Message(const Limit limit) noexcept
   : header_fields_{limit}
-  , message_body_{nullptr, 0}
+  , message_body_{}
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -84,18 +84,29 @@ Message& Message::clear_headers() noexcept {
 
 ///////////////////////////////////////////////////////////////////////////////
 Message& Message::add_body(const Message_Body& message_body) {
-  if (message_body.is_empty()) return *this;
+  if (message_body.empty()) return *this;
   //-----------------------------------
   message_body_ = message_body;
-  mbody_length_ = std::to_string(message_body_.len);
+  mbody_length_ = std::to_string(message_body_.size());
   //-----------------------------------
   return add_header(header_fields::Entity::Content_Length,
                     mbody_length_.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+Message& Message::add_chunk(const std::string& chunk) {
+  if (chunk.empty()) return *this;
+  //-----------------------------------
+  message_body_.append(chunk);
+  mbody_length_ = std::to_string(message_body_.size());
+  //-----------------------------------
+  return set_header(header_fields::Entity::Content_Length,
+                    mbody_length_.c_str());
+}
+
+///////////////////////////////////////////////////////////////////////////////
 bool Message::has_body() const noexcept {
-  return not message_body_.is_empty();
+  return not message_body_.empty();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

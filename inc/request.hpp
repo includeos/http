@@ -251,7 +251,7 @@ inline std::string Request::query_value(Name&& name) const noexcept {
 template <typename Name>
 inline std::string Request::post_value(Name&& name) const noexcept {
   if (method() not_eq POST) return std::string{};
-  return get_value(get_body().to_string(), std::forward<Name>(name));
+  return get_value(get_body(), std::forward<Name>(name));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

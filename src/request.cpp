@@ -116,7 +116,7 @@ Request& Request::configure_settings() noexcept {
 
   settings_.on_body = [](http_parser* parser, const char* at, size_t length) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->add_body({at, length});
+    req->add_chunk({at, length});
     return 0;
   };
 

@@ -30,7 +30,7 @@ private:
   // Internal class type aliases
   //----------------------------------------
   using HSize        = Limit;
-  using Message_Body = span;
+  using Message_Body = std::string;
   using MBody_Length = std::string;
   //----------------------------------------
 public:
@@ -191,6 +191,15 @@ public:
   // @return - The object that invoked this method
   //----------------------------------------
   Message& add_body(const Message_Body& message_body);
+
+  //----------------------------------------
+  // Append a chunk to the entity of the message
+  //
+  // @param chunk - A chunk to append to the entity
+  //
+  // @return - The object that invoked this method
+  //----------------------------------------
+  Message& add_chunk(const std::string& chunk);
 
   //----------------------------------------
   // Check if this message has an entity
