@@ -31,6 +31,7 @@ private:
   //----------------------------------------
   using HSize        = Limit;
   using Message_Body = span;
+  using MBody_Length = std::string;
   //----------------------------------------
 public:
   //----------------------------------------
@@ -243,105 +244,8 @@ private:
   //------------------------------
   Header       header_fields_;
   Message_Body message_body_;
+  MBody_Length mbody_length_;
 }; //< class Message
-
-/**--v----------- Implementation Details -----------v--**/
-
-inline Message::Message(const Limit limit) noexcept:
-  header_fields_{limit},
-  message_body_{nullptr, 0}
-{}
-
-inline Message& Message::add_header(const char* field, const char* value) {
-  header_fields_.add_field({field, strlen(field)}, {value, strlen(value)});
-  return *this;
-}
-
-inline Message& Message::set_header(const char* field, const char* value) {
-  header_fields_.set_field({field, strlen(field)}, {value, strlen(value)});
-  return *this;
-}
-
-inline Message& Message::add_header(const span& field, const span& value) {
-  header_fields_.add_field(field, value);
-  return *this;
-}
-
-inline Message& Message::set_header(const span& field, const span& value) {
-  header_fields_.set_field(field, value);
-  return *this;
-}
-
-inline const span Message::header_value(const char* field) const noexcept {
-  return header_fields_.get_value(field);
-}
-
-inline bool Message::has_header(const char* field) const noexcept {
-  return header_fields_.has_field(field);
-}
-
-inline bool Message::is_header_empty() const noexcept {
-  return header_fields_.is_empty();
-}
-
-inline Message::HSize Message::header_size() const noexcept {
-  return header_fields_.size();
-}
-
-inline Message& Message::erase_header(const char* field) noexcept {
-  header_fields_.erase(field);
-  return *this;
-}
-
-inline Message& Message::clear_headers() noexcept {
-  header_fields_.clear();
-  return *this;
-}
-
-inline Message& Message::add_body(const Message_Body& message_body) {
-  if (message_body.is_empty()) return *this;
-  //-----------------------------------
-  message_body_ = message_body;
-  //-----------------------------------
-  return add_header(header_fields::Entity::Content_Length.c_str(),
-                    std::to_string(message_body_.len).c_str());
-}
-
-inline bool Message::has_body() const noexcept {
-  return not message_body_.is_empty();
-}
-
-inline const Message::Message_Body& Message::get_body() const noexcept {
-  return message_body_;
-}
-
-inline Message& Message::clear_body() noexcept {
-  message_body_.clear();
-  return erase_header(header_fields::Entity::Content_Length.c_str());
-}
-
-inline Message& Message::reset() noexcept {
-  return clear_headers().clear_body();
-}
-
-inline std::string Message::to_string() const {
-  return *this;
-}
-
-inline Message::operator std::string () const {
-  std::ostringstream message;
-  //-----------------------------------
-  message << header_fields_
-          << message_body_;
-  //-----------------------------------
-  return message.str();
-}
-
-inline std::ostream& operator << (std::ostream& output_device, const Message& message) {
-  return output_device << message.to_string();
-}
-
-/**--^----------- Implementation Details -----------^--**/
 
 } //< namespace http
 

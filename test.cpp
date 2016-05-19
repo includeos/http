@@ -29,11 +29,11 @@ int main() {
   //--------------------------------------------------------------
   auto ingress = "GET /q?install=yes&machine=x86 HTTP/1.1\r\n"
                  "Host: 128.39.120.91:4300\r\n"
-                 "Accept: text/html\r\n\r\n"s;
+                 "Accept: */*\r\n\r\n"s;
 
   auto req = http::make_request(move(ingress));
 
-  std::cout << req->method() << '\n';
+  std::cout << req->header_value("Host") << '\n';
 
   //--------------------------------------------------------------
   // Response

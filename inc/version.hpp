@@ -35,7 +35,7 @@ public:
   // @param major - The major version number
   // @param minor - The minor version number
   //----------------------------------------
-  explicit constexpr Version(const unsigned major = 1, const unsigned minor = 1) noexcept;
+  explicit Version(const unsigned major = 1, const unsigned minor = 1) noexcept;
 
   //-----------------------------------
   // Default destructor
@@ -67,7 +67,7 @@ public:
   //
   // @return - The major version number
   //-----------------------------------
-  constexpr unsigned get_major() const noexcept;
+  unsigned get_major() const noexcept;
 
   //-----------------------------------
   // Set the major version number
@@ -81,7 +81,7 @@ public:
   //
   // @return - The minor version number
   //-----------------------------------
-  constexpr unsigned get_minor() const noexcept;
+  unsigned get_minor() const noexcept;
 
   //-----------------------------------
   // Set the minor version number
@@ -113,92 +113,45 @@ private:
   //-----------------------------------
 }; //< class Version
 
-/**--v----------- Implementation Details -----------v--**/
-
-inline constexpr Version::Version(const unsigned major, const unsigned minor) noexcept:
-  major_{major},
-  minor_{minor}
-{}
-
-inline constexpr unsigned Version::get_major() const noexcept {
-  return major_;
-}
-
-inline void Version::set_major(const unsigned major) noexcept {
-  major_ = major;
-}
-
-inline constexpr unsigned Version::get_minor() const noexcept {
-  return minor_;
-}
-
-inline void Version::set_minor(const unsigned minor) noexcept {
-  minor_ = minor;
-}
-
-inline std::string Version::to_string() const {
-  return *this;
-}
-
-inline Version::operator std::string () const {
-  std::ostringstream ver_data;
-  //----------------------------
-  ver_data << "HTTP/" << major_
-           << "."     << minor_;
- //-----------------------------
-  return ver_data.str();
-}
-
-inline std::ostream& operator << (std::ostream& output_device, const Version& version) {
-  return output_device << version.to_string();
-}
+/**--v----------- Helper Functions -----------v--**/
 
 //-----------------------------------
 // Operator to check for equality
 //-----------------------------------
-inline bool operator == (const Version& lhs, const Version& rhs) noexcept {
-  return lhs.get_major() == rhs.get_major()
-         and
-         lhs.get_minor() == rhs.get_minor();
-}
+bool operator == (const Version& lhs, const Version& rhs) noexcept;
 
 //-----------------------------------
 // Operator to check for inequality
 //-----------------------------------
-inline bool operator != (const Version& lhs, const Version& rhs) noexcept {
-  return not (lhs == rhs);
-}
+bool operator != (const Version& lhs, const Version& rhs) noexcept;
 
 //-----------------------------------
 // Operator to check for less than relationship
 //-----------------------------------
-inline bool operator < (const Version& lhs, const Version& rhs) noexcept {
-  return lhs.get_major() < rhs.get_major()
-         or
-         lhs.get_minor() < rhs.get_minor();
-}
+bool operator < (const Version& lhs, const Version& rhs) noexcept;
 
 //-----------------------------------
 // Operator to check for greater than relationship
 //-----------------------------------
-inline bool operator > (const Version& lhs, const Version& rhs) noexcept {
-  return lhs.get_major() > rhs.get_major()
-         or
-         lhs.get_minor() > rhs.get_minor();
-}
+bool operator > (const Version& lhs, const Version& rhs) noexcept;
 
 //-----------------------------------
 // Operator to check for less than or equal to relationship
 //-----------------------------------
-inline bool operator <= (const Version& lhs, const Version& rhs) noexcept {
-  return (lhs < rhs) or (lhs == rhs);
-}
+bool operator <= (const Version& lhs, const Version& rhs) noexcept;
 
 //-----------------------------------
 // Operator to check for greater than or equal to relationship
 //-----------------------------------
-inline bool operator >= (const Version& lhs, const Version& rhs) noexcept {
-  return (lhs > rhs) or (lhs == rhs);
+bool operator >= (const Version& lhs, const Version& rhs) noexcept;
+
+/**--v----------- Helper Functions -----------v--**/
+
+/**--v----------- Implementation Details -----------v--**/
+
+///////////////////////////////////////////////////////////////////////////////
+inline std::ostream& operator << (std::ostream& output_device, const Version& version) {
+  return output_device << version.to_string();
 }
 
 /**--^----------- Implementation Details -----------^--**/

@@ -17,10 +17,27 @@
 
 CXX=clang++
 CXXFLAGS=-std=c++14 -Wall -Wextra -Ofast
-INCLUDES=-I. -I./parser
+INCLUDES=-I./inc -I./inc/parser
 
-DEP=parser/http_parser.c
+SOURCES=src/request.cpp src/response.cpp src/version.cpp \
+		src/message.cpp src/header.cpp src/span.cpp
 
-test: testing.cpp header.hpp
-	${CXX} ${CXXFLAGS} ${INCLUDES} -otest testing.cpp ${DEP}
+OBJECTS=request.o response.o version.o message.o header.o span.o
+
+DEP=inc/parser/http_parser.c
+
+test: test.cpp objs
+	${CXX} ${CXXFLAGS} ${INCLUDES} -otest test.cpp ${OBJECTS} ${DEP}
+
+lib: objs
+	ar -cq libhttp.a ${OBJECTS}
+	ranlib libhttp.a
+	mkdir lib
+	mv libhttp.a lib
+	rm *.o
 	
+objs: src/request.cpp src/response.cpp src/message.cpp src/header.cpp src/span.cpp
+	${CXX} ${CXXFLAGS} ${INCLUDES} -c ${SOURCES}
+
+clean:
+	rm *.o test

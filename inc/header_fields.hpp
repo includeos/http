@@ -18,12 +18,10 @@
 #ifndef HTTP_HEADER_FIELDS_HPP
 #define HTTP_HEADER_FIELDS_HPP
 
-#include <string>
-
 namespace http {
 namespace header_fields {
 //------------------------------------------------
-using Field = const std::string;
+using Field = const char*;
 //------------------------------------------------
 //------------------------------------------------
 namespace Request {

@@ -241,64 +241,20 @@ private:
 
 /**--v----------- Implementation Details -----------v--**/
 
-inline Request::Request(const char* request, const size_t length, const Limit limit)
-  : Request{{request, length}, limit}
-{}
-
-inline Request::Request(std::string request, const Limit limit)
-  : Message{limit}
-  , request_{std::move(request)}
-  , field_{nullptr, 0}
-{
-  configure_settings()
-  .execute_parser();
-}
-
-inline Method Request::method() const noexcept {
-  return method_;
-}
-
-inline Request& Request::set_method(const Method method) {
-  method_ = method;
-  return *this;
-}
-
-inline const URI& Request::uri() const noexcept {
-  return uri_;
-}
-
-inline Request& Request::set_uri(const URI& uri) {
-  uri_ = uri;
-  return *this;
-}
-
-inline const Version& Request::version() const noexcept {
-  return version_;
-}
-
-inline Request& Request::set_version(const Version& version) noexcept {
-  version_ = version;
-  return *this;
-}
-
+///////////////////////////////////////////////////////////////////////////////
 template <typename Name>
 inline std::string Request::query_value(Name&& name) const noexcept {
   return get_value(uri(), std::forward<Name>(name));
 }
 
+///////////////////////////////////////////////////////////////////////////////
 template <typename Name>
 inline std::string Request::post_value(Name&& name) const noexcept {
   if (method() not_eq POST) return std::string{};
   return get_value(get_body(), std::forward<Name>(name));
 }
 
-inline Request& Request::reset() noexcept {
-  Message::reset();
-  return set_method(GET)
-        .set_uri("/")
-        .set_version(Version{1U, 1U});
-}
-
+///////////////////////////////////////////////////////////////////////////////
 template <typename Data, typename Name>
 inline std::string Request::get_value(Data&& data, Name&& name) const noexcept {
   if (data.empty() || name.empty()) return std::string{};
@@ -318,73 +274,19 @@ inline std::string Request::get_value(Data&& data, Name&& name) const noexcept {
   return focal_point.substr(lock_and_load + 1);
 }
 
-inline std::string Request::to_string() const {
-  return *this;
-}
-
-inline Request::operator std::string () const {
-  return request_;
-}
-
-inline Request& Request::configure_settings() noexcept {
-  http_parser_settings_init(&settings_);
-
-  settings_.on_message_begin = [](http_parser* parser) {
-    auto req = reinterpret_cast<Request*>(parser->data);
-    req->method_ = http::method::code(http_method_str(static_cast<http_method>(parser->method)));
-    return 0;
-  };
-
-  settings_.on_url = [](http_parser* parser, const char* at, size_t length) {
-    auto req = reinterpret_cast<Request*>(parser->data);
-    req->uri_ = std::string{at, length};
-    return 0;
-  };
-
-  settings_.on_header_field = [](http_parser* parser, const char* at, size_t length) {
-    auto req = reinterpret_cast<Request*>(parser->data);
-    req->field_.data = at;
-    req->field_.len  = length;
-    return 0;
-  };
-
-  settings_.on_header_value = [](http_parser* parser, const char* at, size_t length) {
-    auto req = reinterpret_cast<Request*>(parser->data);
-    req->add_header(req->field_, {at, length});
-    return 0;
-  };
-
-  settings_.on_body = [](http_parser* parser, const char* at, size_t length) {
-    auto req = reinterpret_cast<Request*>(parser->data);
-    req->add_body({at, length});
-    return 0;
-  };
-
-  settings_.on_headers_complete = [](http_parser* parser) {
-    auto req = reinterpret_cast<Request*>(parser->data);
-    req->version_ = Version{parser->http_major, parser->http_minor};
-    return 0;
-  };
-
-  return *this;
-}
-
-inline void Request::execute_parser() noexcept {
-  http_parser_init(&parser_, HTTP_REQUEST);
-  parser_.data = this;
-  http_parser_execute(&parser_, &settings_, request_.data(), request_.size());
-}
-
-inline std::ostream& operator << (std::ostream& output_device, const Request& req) {
-  return output_device << req.to_string();
-}
-
+///////////////////////////////////////////////////////////////////////////////
 inline Request_ptr make_request(buffer_t buf, const size_t len) {
   return std::make_shared<Request>(reinterpret_cast<char*>(buf.get()), len);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 inline Request_ptr make_request(std::string request) {
   return std::make_shared<Request>(std::move(request));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+inline std::ostream& operator << (std::ostream& output_device, const Request& req) {
+  return output_device << req.to_string();
 }
 
 /**--^----------- Implementation Details -----------^--**/

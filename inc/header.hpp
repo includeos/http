@@ -28,7 +28,6 @@
 
 #include "span.hpp"
 #include "common.hpp"
-#include "header_fields.hpp" //< Standard header field names
 
 namespace http {
 
@@ -195,105 +194,6 @@ private:
   //-----------------------------------------------
   friend std::ostream& operator << (std::ostream&, const Header&);
 }; //< class Header
-
-/**--v----------- Implementation Details -----------v--**/
-
-inline Header::Header(const Limit limit) noexcept {
-  if (limit <= 0) return;
-  limit_ = limit;
-}
-
-inline bool Header::add_field(const span& field, const span& value) {
-  if (field.is_empty()) return false;
-  //-----------------------------------
-  if (size() < limit_) {
-    map_.emplace_back(field, value);
-    return true;
-  }
-  //-----------------------------------
-  return false;
-}
-
-inline bool Header::set_field(const span& field, const span& value) {
-  if (field.is_empty() || value.is_empty()) return false;
-  //-----------------------------------
-  auto target = find(field);
-  //-----------------------------------
-  if (target not_eq map_.end()) {
-    const_cast<span&>(target->second).data = value.data;
-    const_cast<span&>(target->second).len  = value.len;
-    return true;
-  }
-  //-----------------------------------
-  else return add_field(field, value);
-}
-
-inline bool Header::has_field(const char* field) const noexcept {
-  auto field_length = strlen(field);
-  //-----------------------------------
-  if (field_length == 0) return false;
-  //-----------------------------------
-  return find({field, field_length}) not_eq map_.end();
-}
-
-inline const span Header::get_value(const char* field) const noexcept {
-  auto field_length = strlen(field);
-  //-----------------------------------
-  if (field_length == 0) return {nullptr, 0};
-  //-----------------------------------
-  return find({field, field_length})->second;
-}
-
-inline bool Header::is_empty() const noexcept {
-  return map_.empty();
-}
-
-inline Limit Header::size() const noexcept {
-  return map_.size();
-}
-
-inline void Header::erase(const char* field) noexcept {
-   auto field_length = strlen(field);
-  //-----------------------------------
-  if (field_length == 0) return;
-  //-----------------------------------
-  auto target = find({field, field_length});
-  //-----------------------------------
-  if (target not_eq map_.end()) map_.erase(target);
-}
-
-inline void Header::clear() noexcept {
-  map_.clear();
-}
-
-inline static std::string string_to_lower_case(std::string string) {
-  std::transform(string.begin(), string.end(),
-                 string.begin(), ::tolower);
-  //-----------------------------------
-  return string;
-}
-
-inline Header::Const_Iterator Header::find(const span& field) const noexcept {
-  if (field.is_empty()) return map_.end();
-  //-----------------------------------
-  return
-  std::find_if(map_.begin(), map_.end(), [&field](const auto& f){
-    return string_to_lower_case({f.first.data, f.first.len})
-           ==
-           string_to_lower_case({field.data, field.len});
-  });
-}
-
-inline std::ostream& operator << (std::ostream& output_device, const Header& header) {
-  for (const auto& field : header.map_) {
-    output_device << field.first  << ": "
-                  << field.second << "\r\n";
-  }
-  //-----------------------------------
-  return output_device << "\r\n";
-}
-
-/**--^----------- Implementation Details -----------^--**/
 
 } //< namespace http
 

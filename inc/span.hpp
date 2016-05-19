@@ -21,6 +21,8 @@
 #include <string>
 #include <ostream>
 
+namespace http {
+
 //-----------------------------------------------
 // This is a lightweight data-structure to be
 // used within the http package
@@ -33,29 +35,31 @@ struct span {
   size_t      len;
 
   //-----------------------------------------------
+  // Constructor to create an empty span
+  //
+  // @param data - The data to point to
+  // @paran len  - The length (number of bytes) of the data
+  //-----------------------------------------------
+  span(const char* data = nullptr, const size_t len = 0) noexcept;
+
+  //-----------------------------------------------
   // Operator to check if two spans are equal to
   // each other, which mean that they represent
   // similar tokens
   //-----------------------------------------------
-  bool operator==(const span& other) const noexcept {
-    if (len not_eq other.len) return false;
-    return strncmp(data, other.data, other.len) == 0;
-  }
+  bool operator==(const span& other) const noexcept;
 
   //-----------------------------------------------
   // Method to check if a span has no information,
   // which mean it doesn't represent a token
   //-----------------------------------------------
-  bool is_empty() const noexcept {
-    return data == nullptr or len == 0;
-  }
+  bool is_empty() const noexcept;
 
   //-----------------------------------------------
   // Method to change the state of this
   // data-structure to empty
   //-----------------------------------------------
-  void clear() noexcept
-  { data = nullptr; len = 0; }
+  void clear() noexcept;
 
   //-----------------------------------
   // Get a string representation of this
@@ -63,16 +67,16 @@ struct span {
   //
   // @return - A string representation
   //-----------------------------------
-  std::string to_string() const
-  { return *this; }
+  std::string to_string() const;
 
   //-----------------------------------------------
   // Operator to transform this data-structure
   // into string form
   //-----------------------------------------------
-  operator std::string () const
-  { return std::string{data, len}; }
+  operator std::string () const;
 }; //< struct span
+
+/**--v----------- Implementation Details -----------v--**/
 
 //-----------------------------------------------
 // Operator to stream the contents of a span to
@@ -81,5 +85,9 @@ struct span {
 inline std::ostream& operator << (std::ostream& output_device, const span& span) {
   return output_device << span.to_string();
 }
+
+/**--^----------- Implementation Details -----------^--**/
+
+} //< namespace http
 
 #endif //< HTTP_SPAN_HPP
