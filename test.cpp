@@ -27,9 +27,8 @@ int main() {
   //--------------------------------------------------------------
   // Request
   //--------------------------------------------------------------
-  auto ingress = "POST /joyent/http-parser HTTP/1.1\r\n"
-                 "Host: github.com\r\n"
-                 "DNT: 1\r\n"
+  auto ingress = "POST /greeting.txt HTTP/1.1\r\n"
+                 "Host: includeos.server.acorn:5050\r\n"
                  "Accept-Encoding: gzip, deflate, sdch\r\n"
                  "Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4\r\n"
                  "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
@@ -37,14 +36,15 @@ int main() {
                  "Chrome/39.0.2171.65 Safari/537.36\r\n"
                  "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,"
                  "image/webp,*/*;q=0.8\r\n"
-                 "Referer: https://github.com/joyent/http-parser\r\n"
+                 "Referer: https://github.com/hioa-cs/IncludeOS\r\n"
                  "Connection: keep-alive\r\n"
                  "Transfer-Encoding: chunked\r\n"
-                 "Cache-Control: max-age=0\r\n\r\nb\r\nhello world\r\n3\r\n is\r\n0\r\n\r\n"s;
+                 "Cache-Control: max-age=0\r\n\r\nb\r\nHello World\r\n5\r\n from\r\n"
+                 "a\r\n IncludeOS\r\n0\r\n\r\n"s;
 
   auto req = http::make_request(move(ingress));
 
-  std::cout << req->header_value("Content-Length") << '\n';
+  std::cout << req->get_body() << '\n';
 
   //--------------------------------------------------------------
   // Response
