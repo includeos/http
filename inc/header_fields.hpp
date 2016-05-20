@@ -19,12 +19,12 @@
 #define HTTP_HEADER_FIELDS_HPP
 
 namespace http {
-namespace header_fields {
+namespace header {
 //------------------------------------------------
 using Field = const char*;
 //------------------------------------------------
+// Request Fields
 //------------------------------------------------
-namespace Request {
 Field Accept              {"Accept"};
 Field Accept_Charset      {"Accept-Charset"};
 Field Accept_Encoding     {"Accept-Encoding"};
@@ -45,13 +45,11 @@ Field Range               {"Range"};
 Field Referer             {"Referer"};
 Field TE                  {"TE"};
 Field User_Agent          {"User-Agent"};
-} //< namespace Request
 //------------------------------------------------
+// Response Fields
 //------------------------------------------------
-namespace Response {
 Field Accept_Ranges       {"Accept-Ranges"};
 Field Age                 {"Age"};
-Field Connection          {"Connection"};
 Field ETag                {"ETag"};
 Field Location            {"Location"};
 Field Proxy_Authenticate  {"Proxy-Authenticate"};
@@ -59,10 +57,9 @@ Field Retry_After         {"Retry-After"};
 Field Server              {"Server"};
 Field Vary                {"Vary"};
 Field WWW_Authenticate    {"WWW-Authenticate"};
-} //< namespace Response
 //------------------------------------------------
+// Entity Fields
 //------------------------------------------------
-namespace Entity {
 Field Allow               {"Allow"};
 Field Content_Encoding    {"Content-Encoding"};
 Field Content_Language    {"Content-Language"};
@@ -73,10 +70,9 @@ Field Content_Range       {"Content-Range"};
 Field Content_Type        {"Content-Type"};
 Field Expires             {"Expires"};
 Field Last_Modified       {"Last-Modified"};
-} //< namespace Entity
 //------------------------------------------------
 //------------------------------------------------
-} //< namespace header_fields
+} //< namespace header
 } //< namespace http
 
 #endif //< HTTP_HEADER_FIELDS_HPP

@@ -89,7 +89,7 @@ Message& Message::add_body(const Message_Body& message_body) {
   message_body_ = message_body;
   mbody_length_ = std::to_string(message_body_.size());
   //-----------------------------------
-  return add_header(header_fields::Entity::Content_Length,
+  return add_header(header::Content_Length,
                     mbody_length_.c_str());
 }
 
@@ -100,7 +100,7 @@ Message& Message::add_chunk(const std::string& chunk) {
   message_body_.append(chunk);
   mbody_length_ = std::to_string(message_body_.size());
   //-----------------------------------
-  return set_header(header_fields::Entity::Content_Length,
+  return set_header(header::Content_Length,
                     mbody_length_.c_str());
 }
 
@@ -117,7 +117,7 @@ const Message::Message_Body& Message::get_body() const noexcept {
 ///////////////////////////////////////////////////////////////////////////////
 Message& Message::clear_body() noexcept {
   message_body_.clear();
-  return erase_header(header_fields::Entity::Content_Length);
+  return erase_header(header::Content_Length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

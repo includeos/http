@@ -97,7 +97,7 @@ Response& Response::configure_settings() noexcept {
 
   settings_.on_body = [](http_parser* parser, const char* at, size_t length) {
     auto res = reinterpret_cast<Response*>(parser->data);
-    res->add_body({at, length});
+    res->add_chunk({at, length});
     return 0;
   };
 
