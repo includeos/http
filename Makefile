@@ -24,7 +24,7 @@ SOURCES=src/request.cpp src/response.cpp src/version.cpp \
 
 OBJECTS=request.o response.o version.o message.o header.o span.o
 
-DEP=inc/parser/http_parser.c
+DEP=inc/parser/http_parser.cpp
 
 test: test.cpp objs
 	${CXX} ${CXXFLAGS} ${INCLUDES} -otest test.cpp ${OBJECTS} ${DEP}
