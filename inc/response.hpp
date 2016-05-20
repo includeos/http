@@ -44,18 +44,6 @@ public:
   //----------------------------------------
   // Constructor to construct a response
   // message from the incoming character
-  // stream of data which is a C-String
-  //
-  // @param response - The character stream of data
-  //
-  // @param limit - Capacity of how many fields can
-  //                be added
-  //----------------------------------------
-  explicit Response(const char* response, const size_t length, const Limit limit = 100);
-
-  //----------------------------------------
-  // Constructor to construct a response
-  // message from the incoming character
   // stream of data which is a <std::string>
   // object
   //
@@ -186,13 +174,13 @@ private:
 /**--v----------- Implementation Details -----------v--**/
 
 ///////////////////////////////////////////////////////////////////////////////
-inline Response_ptr make_response(buffer_t buf, const size_t len) {
-  return std::make_shared<Response>(reinterpret_cast<char*>(buf.get()), len);
+inline Response_ptr make_response(std::string response) {
+  return std::make_shared<Response>(std::move(response));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-inline Response_ptr make_response(std::string response) {
-  return std::make_shared<Response>(std::move(response));
+inline Response_ptr make_response(buffer_t buf, const size_t len) {
+  return make_response(std::string{reinterpret_cast<char*>(buf.get()), len});
 }
 
 ///////////////////////////////////////////////////////////////////////////////

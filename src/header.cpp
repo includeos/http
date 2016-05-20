@@ -53,21 +53,13 @@ bool Header::set_field(const span& field, const span& value) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Header::has_field(const char* field) const noexcept {
-  auto field_length = strlen(field);
-  //-----------------------------------
-  if (field_length == 0) return false;
-  //-----------------------------------
-  return find({field, field_length}) not_eq map_.end();
+bool Header::has_field(const span& field) const noexcept {
+  return find(field) not_eq map_.end();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const span Header::get_value(const char* field) const noexcept {
-  auto field_length = strlen(field);
-  //-----------------------------------
-  if (field_length == 0) return {nullptr, 0};
-  //-----------------------------------
-  return find({field, field_length})->second;
+const span Header::get_value(const span& field) const noexcept {
+  return find(field)->second;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -81,12 +73,8 @@ Limit Header::size() const noexcept {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Header::erase(const char* field) noexcept {
-   auto field_length = strlen(field);
-  //-----------------------------------
-  if (field_length == 0) return;
-  //-----------------------------------
-  auto target = find({field, field_length});
+void Header::erase(const span& field) noexcept {
+  auto target = find(field);
   //-----------------------------------
   if (target not_eq map_.end()) map_.erase(target);
 }
@@ -110,9 +98,9 @@ Header::Const_Iterator Header::find(const span& field) const noexcept {
   //-----------------------------------
   return
   std::find_if(map_.begin(), map_.end(), [&field](const auto& f){
-    return string_to_lower_case({f.first.data, f.first.len})
+    return string_to_lower_case(f.first.to_string())
            ==
-           string_to_lower_case({field.data, field.len});
+           string_to_lower_case(field.to_string());
   });
 }
 

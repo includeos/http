@@ -123,7 +123,7 @@ public:
   // @return - true if the field is a member,
   //           false otherwise
   //-----------------------------------------------
-  bool has_field(const char* field) const noexcept;
+  bool has_field(const span& field) const noexcept;
 
   //-----------------------------------------------
   // Get the value associated with a field
@@ -135,7 +135,7 @@ public:
   // @return - The value associated with the
   //           specified field name
   //-----------------------------------------------
-  const span get_value(const char* field) const noexcept;
+  const span get_value(const span& field) const noexcept;
 
   //-----------------------------------------------
   // Check to see if the set is empty
@@ -160,7 +160,7 @@ public:
   //
   // @param field - The field name to remove
   //-----------------------------------------------
-  void erase(const char* field) noexcept;
+  void erase(const span& field) noexcept;
 
   //-----------------------------------------------
   // Remove all fields from the set leaving it

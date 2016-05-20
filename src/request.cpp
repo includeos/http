@@ -20,11 +20,6 @@
 namespace http {
 
 ///////////////////////////////////////////////////////////////////////////////
-Request::Request(const char* request, const size_t length, const Limit limit)
-  : Request{{request, length}, limit}
-{}
-
-///////////////////////////////////////////////////////////////////////////////
 Request::Request(std::string request, const Limit limit)
   : Message{limit}
   , request_{std::move(request)}

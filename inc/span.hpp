@@ -36,11 +36,24 @@ struct span {
 
   //-----------------------------------------------
   // Constructor to create an empty span
+  //-----------------------------------------------
+  span() noexcept;
+
+  //-----------------------------------------------
+  // Constructor to create a span from a C-String
+  //
+  // @param data - The data to point to (null terminated cstring)
+  //-----------------------------------------------
+  span(const char* data) noexcept;
+
+  //-----------------------------------------------
+  // Constructor to create a span from data pointer and
+  // length
   //
   // @param data - The data to point to
   // @paran len  - The length (number of bytes) of the data
   //-----------------------------------------------
-  span(const char* data = nullptr, const size_t len = 0) noexcept;
+  span(const char* data, const size_t len) noexcept;
 
   //-----------------------------------------------
   // Operator to check if two spans are equal to

@@ -42,19 +42,6 @@ public:
   //----------------------------------------
   // Constructor to construct a request
   // message from the incoming character
-  // stream of data which is a C-String
-  //
-  // @param request - The character stream of data
-  // @param length  - The length of the character stream
-  //
-  // @param limit - Capacity of how many fields can
-  //                be added
-  //----------------------------------------
-  explicit Request(const char* request, const size_t length, const Limit limit = 100);
-
-  //----------------------------------------
-  // Constructor to construct a request
-  // message from the incoming character
   // stream of data which is a <std::string>
   // object
   //
@@ -275,13 +262,13 @@ inline std::string Request::get_value(Data&& data, Name&& name) const noexcept {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-inline Request_ptr make_request(buffer_t buf, const size_t len) {
-  return std::make_shared<Request>(reinterpret_cast<char*>(buf.get()), len);
+inline Request_ptr make_request(std::string request) {
+  return std::make_shared<Request>(std::move(request));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-inline Request_ptr make_request(std::string request) {
-  return std::make_shared<Request>(std::move(request));
+inline Request_ptr make_request(buffer_t buf, const size_t len) {
+  return make_request(std::string{reinterpret_cast<char*>(buf.get()), len});
 }
 
 ///////////////////////////////////////////////////////////////////////////////

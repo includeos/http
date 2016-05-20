@@ -26,11 +26,6 @@ Response::Response(const Code code, const Version version) noexcept
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
-Response::Response(const char* response, const size_t length, const Limit limit)
-  : Response{{response, length}, limit}
-{}
-
-///////////////////////////////////////////////////////////////////////////////
 Response::Response(std::string response, const Limit limit)
   : Message{limit}
   , response_{std::move(response)}

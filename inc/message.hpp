@@ -82,31 +82,7 @@ public:
   //
   // @return - The object that invoked this method
   //----------------------------------------
-  Message& add_header(const char* field, const char* value);
-
-  //----------------------------------------
-  // Add a new field to the current set of
-  // headers
-  //
-  // @param field - The field name
-  // @param value - The field value
-  //
-  // @return - The object that invoked this method
-  //----------------------------------------
   Message& add_header(const span& field, const span& value);
-
-  //----------------------------------------
-  // Change the value of the specified field
-  //
-  // If the field is absent from the message it
-  // will be added with the associated value
-  //
-  // @param field - The field name
-  // @param value - The field value
-  //
-  // @return - The object that invoked this method
-  //----------------------------------------
-  Message& set_header(const char* field, const char* value);
 
   //----------------------------------------
   // Change the value of the specified field
@@ -129,7 +105,7 @@ public:
   //
   // @return - true is present, false otherwise
   //----------------------------------------
-  bool has_header(const char* field) const noexcept;
+  bool has_header(const span& field) const noexcept;
 
   //----------------------------------------
   // Get the value associated with the
@@ -143,7 +119,7 @@ public:
   // @return - The value associated with the
   //           specified field name
   //----------------------------------------
-  const span header_value(const char* field) const noexcept;
+  const span header_value(const span& field) const noexcept;
 
   //----------------------------------------
   // Check if there are no fields in this
@@ -172,7 +148,7 @@ public:
   //
   // @return - The object that invoked this method
   //----------------------------------------
-  Message& erase_header(const char* field) noexcept;
+  Message& erase_header(const span& field) noexcept;
 
   //----------------------------------------
   // Remove all header fields from this

@@ -27,18 +27,6 @@ Message::Message(const Limit limit) noexcept
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
-Message& Message::add_header(const char* field, const char* value) {
-  header_fields_.add_field({field, strlen(field)}, {value, strlen(value)});
-  return *this;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-Message& Message::set_header(const char* field, const char* value) {
-  header_fields_.set_field({field, strlen(field)}, {value, strlen(value)});
-  return *this;
-}
-
-///////////////////////////////////////////////////////////////////////////////
 Message& Message::add_header(const span& field, const span& value) {
   header_fields_.add_field(field, value);
   return *this;
@@ -51,12 +39,12 @@ Message& Message::set_header(const span& field, const span& value) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const span Message::header_value(const char* field) const noexcept {
+const span Message::header_value(const span& field) const noexcept {
   return header_fields_.get_value(field);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Message::has_header(const char* field) const noexcept {
+bool Message::has_header(const span& field) const noexcept {
   return header_fields_.has_field(field);
 }
 
@@ -71,7 +59,7 @@ Message::HSize Message::header_size() const noexcept {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Message& Message::erase_header(const char* field) noexcept {
+Message& Message::erase_header(const span& field) noexcept {
   header_fields_.erase(field);
   return *this;
 }
