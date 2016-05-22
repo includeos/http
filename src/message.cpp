@@ -16,7 +16,6 @@
 // limitations under the License.
 
 #include <message.hpp>
-#include <header_fields.hpp> //< Standard header field names
 
 namespace http {
 

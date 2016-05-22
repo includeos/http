@@ -43,7 +43,6 @@ install:
 	cp -r inc/* ${INCLUDEOS_INSTALL}/packages/include/http
 	cp -r lib/* ${INCLUDEOS_INSTALL}/packages/lib/http
 
-
 clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(LIB)

@@ -17,7 +17,13 @@
 
 #include <request.hpp>
 
+#include <http_parser.h>
+
 namespace http {
+
+static void configure_settings(http_parser_settings&) noexcept;
+
+static void execute_parser(Request*, http_parser*, http_parser_settings*, const std::string&) noexcept;
 
 ///////////////////////////////////////////////////////////////////////////////
 Request::Request(std::string request, const Limit limit)
@@ -25,8 +31,11 @@ Request::Request(std::string request, const Limit limit)
   , request_{std::move(request)}
   , field_{nullptr, 0}
 {
-  configure_settings()
-  .execute_parser();
+  http_parser          _parser;
+  http_parser_settings _settings;
+
+  configure_settings(_settings);
+  execute_parser(this, &_parser, &_settings, request_);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +81,13 @@ Request& Request::reset() noexcept {
 
 ///////////////////////////////////////////////////////////////////////////////
 std::string Request::to_string() const {
-  return request_;
+  std::ostringstream request;
+  //-----------------------------------
+  request << method_ << " "      << uri_
+          << " "     << version_ << "\r\n"
+          << Message::to_string();
+  //-----------------------------------
+  return request.str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -81,31 +96,38 @@ Request::operator std::string () const {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Request& Request::configure_settings() noexcept {
+span& Request::field() noexcept {
+  return field_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+static void configure_settings(http_parser_settings& settings_) noexcept {
   http_parser_settings_init(&settings_);
 
   settings_.on_message_begin = [](http_parser* parser) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->method_ = http::method::code(http_method_str(static_cast<http_method>(parser->method)));
+    req->set_method(
+            http::method::code(
+                http_method_str(static_cast<http_method>(parser->method))));
     return 0;
   };
 
   settings_.on_url = [](http_parser* parser, const char* at, size_t length) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->uri_ = std::string{at, length};
+    req->set_uri({at, length});
     return 0;
   };
 
   settings_.on_header_field = [](http_parser* parser, const char* at, size_t length) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->field_.data = at;
-    req->field_.len  = length;
+    req->field().data = at;
+    req->field().len  = length;
     return 0;
   };
 
   settings_.on_header_value = [](http_parser* parser, const char* at, size_t length) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->add_header(req->field_, {at, length});
+    req->add_header(req->field(), {at, length});
     return 0;
   };
 
@@ -117,18 +139,17 @@ Request& Request::configure_settings() noexcept {
 
   settings_.on_headers_complete = [](http_parser* parser) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->version_ = Version{parser->http_major, parser->http_minor};
+    req->set_version(Version{parser->http_major, parser->http_minor});
     return 0;
   };
-
-  return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Request::execute_parser() noexcept {
-  http_parser_init(&parser_, HTTP_REQUEST);
-  parser_.data = this;
-  http_parser_execute(&parser_, &settings_, request_.data(), request_.size());
+static void execute_parser(Request* req_, http_parser* parser_, http_parser_settings* settings_,
+                           const std::string& data_) noexcept {
+  http_parser_init(parser_, HTTP_REQUEST);
+  parser_->data = req_;
+  http_parser_execute(parser_, settings_, data_.data(), data_.size());
 }
 
 } //< namespace http

@@ -20,14 +20,17 @@
 
 #include <string>
 #include <memory>
+#include <vector>
+#include <utility>
 #include <cstdint>
-
-#include <http_parser.h>
 
 namespace http {
 
-using URI     = std::string;
-using Limit   = std::size_t;
+using URI   = std::string;
+using Limit = std::size_t;
+
+using CString   = const char*;
+using HeaderSet = std::vector<std::pair<CString, CString>>;
 
 using buffer_t = std::shared_ptr<uint8_t>;
 
