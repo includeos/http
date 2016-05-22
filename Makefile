@@ -15,33 +15,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ifndef INCLUDEOS_INSTALL
+	INCLUDEOS_INSTALL=$(HOME)/IncludeOS_install
+endif
+
 CXX=clang++-3.8
+CC=clang-3.8
+
 CXXFLAGS=-std=c++14 -Wall -Wextra -Ofast
-INCLUDES=-I./inc -I./inc/parser
+CCFLAGS= -Wall -Wextra -Ofast
 
-SOURCES=${wildcard src/*.cpp} inc/parser/http_parser.cpp
-OBJECTS=${SOURCES:.cpp=.o}
+INCLUDES=-I./inc -I./http-parser -I$(INCLUDEOS_INSTALL)/packages/include
+
+CPP_SOURCES=${wildcard src/*.cpp}
+C_SOURCES=http-parser/http_parser.c
+
+OBJECTS=${CPP_SOURCES:.cpp=.o} ${C_SOURCES:.c=.o}
+
 LIB=lib/libhttp.a
-
-
-test: test.cpp ${OBJECTS}
-	${CXX} ${CXXFLAGS} ${INCLUDES} -o test test.cpp lib/libhttp.a
 
 lib: ${OBJECTS}
 	mkdir -p lib
 	ar -cq $(LIB) ${OBJECTS}
 	ranlib $(LIB)
-	$(RM) $(OBJECTS)
+
+test: test.cpp lib
+	${CXX} ${CXXFLAGS} ${INCLUDES} -o test test.cpp $(LIB)
+
+%.o: %.c
+	${CC} ${CCFLAGS} ${INCLUDES} -c $< -o $@
 
 %.o: %.cpp
 	${CXX} ${CXXFLAGS} ${INCLUDES} -c $< -o $@
 
-
 install:
 	mkdir -p ${INCLUDEOS_INSTALL}/packages/include/http
-	mkdir -p ${INCLUDEOS_INSTALL}/packages/lib/http
+	mkdir -p ${INCLUDEOS_INSTALL}/packages/lib/
 	cp -r inc/* ${INCLUDEOS_INSTALL}/packages/include/http
-	cp -r lib/* ${INCLUDEOS_INSTALL}/packages/lib/http
+	cp -r lib/* ${INCLUDEOS_INSTALL}/packages/lib/
 
 clean:
 	$(RM) $(OBJECTS)
