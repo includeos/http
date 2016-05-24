@@ -23,7 +23,6 @@ namespace http {
 ///////////////////////////////////////////////////////////////////////////////
 Message::Message(const Limit limit) noexcept
   : header_fields_{limit}
-  , message_body_{}
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -39,7 +38,7 @@ Message& Message::set_header(const span& field, const span& value) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const span Message::header_value(const span& field) const noexcept {
+const span& Message::header_value(const span& field) const noexcept {
   return header_fields_.get_value(field);
 }
 

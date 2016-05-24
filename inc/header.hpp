@@ -135,7 +135,7 @@ public:
   // @return - The value associated with the
   //           specified field name
   //-----------------------------------------------
-  const span get_value(const span& field) const noexcept;
+  const span& get_value(const span& field) const noexcept;
 
   //-----------------------------------------------
   // Check to see if the set is empty

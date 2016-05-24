@@ -145,7 +145,7 @@ bool operator <= (const Version& lhs, const Version& rhs) noexcept;
 //-----------------------------------
 bool operator >= (const Version& lhs, const Version& rhs) noexcept;
 
-/**--v----------- Helper Functions -----------v--**/
+/**--^----------- Helper Functions -----------^--**/
 
 /**--v----------- Implementation Details -----------v--**/
 

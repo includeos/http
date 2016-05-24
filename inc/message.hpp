@@ -119,7 +119,7 @@ public:
   // @return - The value associated with the
   //           specified field name
   //----------------------------------------
-  const span header_value(const span& field) const noexcept;
+  const span& header_value(const span& field) const noexcept;
 
   //----------------------------------------
   // Check if there are no fields in this

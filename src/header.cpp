@@ -58,7 +58,7 @@ bool Header::has_field(const span& field) const noexcept {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const span Header::get_value(const span& field) const noexcept {
+const span& Header::get_value(const span& field) const noexcept {
   return find(field)->second;
 }
 
