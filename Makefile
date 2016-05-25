@@ -20,9 +20,9 @@ CXXFLAGS=-std=c++14 -Wall -Wextra -Ofast
 INCLUDES=-I./inc -I./inc/parser
 
 SOURCES=src/request.cpp src/response.cpp src/version.cpp \
-		src/message.cpp src/header.cpp src/span.cpp
+		src/message.cpp src/header.cpp src/span.cpp src/time.cpp
 
-OBJECTS=request.o response.o version.o message.o header.o span.o
+OBJECTS=request.o response.o version.o message.o header.o span.o time.o
 
 DEP=inc/parser/http_parser.cpp
 

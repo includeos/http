@@ -20,6 +20,7 @@
 
 namespace http {
 namespace header {
+namespace {
 //------------------------------------------------
 using Field = const char*;
 //------------------------------------------------
@@ -72,6 +73,7 @@ Field Expires             {"Expires"};
 Field Last_Modified       {"Last-Modified"};
 //------------------------------------------------
 //------------------------------------------------
+} //< namespace
 } //< namespace header
 } //< namespace http
 
