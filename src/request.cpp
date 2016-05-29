@@ -72,7 +72,13 @@ Request& Request::reset() noexcept {
 
 ///////////////////////////////////////////////////////////////////////////////
 std::string Request::to_string() const {
-  return request_;
+  std::ostringstream request;
+  //-----------------------------------
+  request << method_ << " "      << uri_
+          << " "     << version_ << "\r\n"
+          << Message::to_string();
+  //-----------------------------------
+  return request.str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

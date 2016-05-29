@@ -21,7 +21,7 @@ namespace http {
 namespace time {
 
 ///////////////////////////////////////////////////////////////////////////////
-std::string from_time_t(const time_t& time_) {
+std::string from_time_t(const time_t time_) {
   auto tm = std::gmtime(&time_);
 
   if (tm) {

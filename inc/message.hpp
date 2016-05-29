@@ -22,6 +22,7 @@
 
 #include "time.hpp"
 #include "header.hpp"
+#include "header_fields.hpp"
 
 namespace http {
 

@@ -27,13 +27,13 @@ namespace time {
 // Get the time in {Internet Standard Format} from
 // a {time_t} object 
 //
-// @param time_ - The time_t object to get the time from
+// @param time_ - The {time_t} object to get the time from
 //
-// @return The current time as a std::string
+// @return The time in {Internet Standard Format} as a std::string
 //
 // @note Returns an empty string if an error occurred
 //------------------------------------------------
-std::string from_time_t(const time_t& time_);
+std::string from_time_t(const time_t time_);
 
 //------------------------------------------------
 // Get a {time_t} object from a {std::string} representing

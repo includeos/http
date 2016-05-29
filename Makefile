@@ -20,24 +20,25 @@ CXXFLAGS=-std=c++14 -Wall -Wextra -Ofast
 INCLUDES=-I./inc -I./inc/parser
 
 SOURCES=src/request.cpp src/response.cpp src/version.cpp \
-		src/message.cpp src/header.cpp src/span.cpp src/time.cpp
+		src/message.cpp src/header.cpp src/header_fields.cpp src/span.cpp src/time.cpp
 
-OBJECTS=request.o response.o version.o message.o header.o span.o time.o
+OBJECTS=request.o response.o version.o message.o header.o header_fields.o span.o time.o
 
 DEP=inc/parser/http_parser.cpp
+DEP_OBJ=http_parser.o
 
 test: test.cpp objs
-	${CXX} ${CXXFLAGS} ${INCLUDES} -otest test.cpp ${OBJECTS} ${DEP}
+	${CXX} ${CXXFLAGS} ${INCLUDES} -otest test.cpp ${OBJECTS} ${DEP_OBJ}
 
 lib: objs
-	ar -cq libhttp.a ${OBJECTS}
+	ar -cq libhttp.a ${OBJECTS} ${DEP_OBJ}
 	ranlib libhttp.a
 	mkdir lib
 	mv libhttp.a lib
 	rm *.o
 	
 objs: src/request.cpp src/response.cpp src/message.cpp src/header.cpp src/span.cpp
-	${CXX} ${CXXFLAGS} ${INCLUDES} -c ${SOURCES}
+	${CXX} ${CXXFLAGS} ${INCLUDES} -c ${SOURCES} ${DEP}
 
 clean:
 	rm *.o test

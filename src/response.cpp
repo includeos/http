@@ -65,7 +65,13 @@ Response& Response::reset() noexcept {
 
 ///////////////////////////////////////////////////////////////////////////////
 std::string Response::to_string() const {
-  return response_;
+  std::ostringstream response;
+  //-----------------------------------
+  response << version_ << " " << code_ << " "
+           << code_description(code_)  << "\r\n"
+           << Message::to_string();
+  //-----------------------------------
+  return response.str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

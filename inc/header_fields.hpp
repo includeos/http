@@ -20,60 +20,58 @@
 
 namespace http {
 namespace header {
-namespace {
 //------------------------------------------------
 using Field = const char*;
 //------------------------------------------------
 // Request Fields
 //------------------------------------------------
-Field Accept              {"Accept"};
-Field Accept_Charset      {"Accept-Charset"};
-Field Accept_Encoding     {"Accept-Encoding"};
-Field Accept_Language     {"Accept-Language"};
-Field Authorization       {"Authorization"};
-Field Connection          {"Connection"};
-Field Expect              {"Expect"};
-Field From                {"From"};
-Field Host                {"Host"};
-Field If_Match            {"If-Match"};
-Field If_Modified_Since   {"If-Modified-Since"};
-Field If_None_Match       {"If-None-Match"};
-Field If_Range            {"If-Range"};
-Field If_Unmodified_Since {"If-Unmodified-Since"};
-Field Max_Forwards        {"Max-Forwards"};
-Field Proxy_Authorization {"Proxy-Authorization"};
-Field Range               {"Range"};
-Field Referer             {"Referer"};
-Field TE                  {"TE"};
-Field User_Agent          {"User-Agent"};
+extern Field Accept;
+extern Field Accept_Charset;
+extern Field Accept_Encoding;
+extern Field Accept_Language;
+extern Field Authorization;
+extern Field Connection;
+extern Field Expect;
+extern Field From;
+extern Field Host;
+extern Field If_Match;
+extern Field If_Modified_Since;
+extern Field If_None_Match;
+extern Field If_Range;
+extern Field If_Unmodified_Since;
+extern Field Max_Forwards;
+extern Field Proxy_Authorization;
+extern Field Range;
+extern Field Referer;
+extern Field TE;
+extern Field User_Agent;
 //------------------------------------------------
 // Response Fields
 //------------------------------------------------
-Field Accept_Ranges       {"Accept-Ranges"};
-Field Age                 {"Age"};
-Field ETag                {"ETag"};
-Field Location            {"Location"};
-Field Proxy_Authenticate  {"Proxy-Authenticate"};
-Field Retry_After         {"Retry-After"};
-Field Server              {"Server"};
-Field Vary                {"Vary"};
-Field WWW_Authenticate    {"WWW-Authenticate"};
+extern Field Accept_Ranges;
+extern Field Age;
+extern Field ETag;
+extern Field Location;
+extern Field Proxy_Authenticate;
+extern Field Retry_After;
+extern Field Server;
+extern Field Vary;
+extern Field WWW_Authenticate;
 //------------------------------------------------
 // Entity Fields
 //------------------------------------------------
-Field Allow               {"Allow"};
-Field Content_Encoding    {"Content-Encoding"};
-Field Content_Language    {"Content-Language"};
-Field Content_Length      {"Content-Length"};
-Field Content_Location    {"Content-Location"};
-Field Content_MD5         {"Content-MD5"};
-Field Content_Range       {"Content-Range"};
-Field Content_Type        {"Content-Type"};
-Field Expires             {"Expires"};
-Field Last_Modified       {"Last-Modified"};
+extern Field Allow;
+extern Field Content_Encoding;
+extern Field Content_Language;
+extern Field Content_Length;
+extern Field Content_Location;
+extern Field Content_MD5;
+extern Field Content_Range;
+extern Field Content_Type;
+extern Field Expires;
+extern Field Last_Modified;
 //------------------------------------------------
 //------------------------------------------------
-} //< namespace
 } //< namespace header
 } //< namespace http
 
