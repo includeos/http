@@ -37,7 +37,7 @@ lib: objs
 	mv libhttp.a lib
 	rm *.o
 	
-objs: src/request.cpp src/response.cpp src/message.cpp src/header.cpp src/span.cpp
+objs: ${SOURCES}
 	${CXX} ${CXXFLAGS} ${INCLUDES} -c ${SOURCES} ${DEP}
 
 clean:
