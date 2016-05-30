@@ -171,6 +171,15 @@ private:
   void execute_parser() noexcept;
 }; //< class Response
 
+/**--v----------- Helper Functions -----------v--**/
+
+//----------------------------------------
+// Add a set of headers to a response message
+//----------------------------------------
+Response& operator << (Response& res, const HeaderSet& headers);
+
+/**--^----------- Helper Functions -----------^--**/
+
 /**--v----------- Implementation Details -----------v--**/
 
 ///////////////////////////////////////////////////////////////////////////////

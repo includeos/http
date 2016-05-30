@@ -119,4 +119,12 @@ void Response::execute_parser() noexcept {
   http_parser_execute(&parser_, &settings_, response_.data(), response_.size());
 }
 
+///////////////////////////////////////////////////////////////////////////////
+Response& operator << (Response& res, const HeaderSet& headers) {
+  for (const auto& field : headers) {
+    res.add_header(field.first, field.second);
+  }
+  return res;
+}
+
 } //< namespace http
