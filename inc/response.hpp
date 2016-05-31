@@ -138,6 +138,8 @@ public:
   //-----------------------------------
   operator std::string () const;
   //-----------------------------------
+
+  span& field() noexcept;
 private:
   //------------------------------
   // Class data members
@@ -150,25 +152,6 @@ private:
   //----------------------------------------
   Code    code_;
   Version version_;
-
-  //----------------------------------------
-  // Private response parser
-  //----------------------------------------
-  http_parser          parser_;
-  http_parser_settings settings_;
-
-  //----------------------------------------
-  // Configure the parser settings
-  //
-  // @return - The object that invoked this
-  //           method
-  //----------------------------------------
-  Response& configure_settings() noexcept;
-
-  //----------------------------------------
-  // Execute the parser
-  //----------------------------------------
-  void execute_parser() noexcept;
 }; //< class Response
 
 /**--v----------- Helper Functions -----------v--**/
