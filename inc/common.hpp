@@ -24,8 +24,6 @@
 #include <utility>
 #include <cstdint>
 
-#include <http_parser.h>
-
 namespace http {
 
 using URI   = std::string;

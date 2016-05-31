@@ -176,6 +176,8 @@ public:
   //----------------------------------------
   operator std::string () const;
   //----------------------------------------
+
+  span& field() noexcept;
 private:
   //----------------------------------------
   // Class data members
@@ -189,25 +191,6 @@ private:
   Method  method_{GET};
   URI     uri_{"/"};
   Version version_{1U, 1U};
-
-  //----------------------------------------
-  // Private request parser
-  //----------------------------------------
-  http_parser          parser_;
-  http_parser_settings settings_;
-
-  //----------------------------------------
-  // Configure the parser settings
-  //
-  // @return - The object that invoked this
-  //           method
-  //----------------------------------------
-  Request& configure_settings() noexcept;
-
-  //----------------------------------------
-  // Execute the parser
-  //----------------------------------------
-  void execute_parser() noexcept;
 
   //----------------------------------------
   // Find the value associated with a name
