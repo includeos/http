@@ -20,16 +20,23 @@
 namespace http {
 
 ///////////////////////////////////////////////////////////////////////////////
+Header::Header() {
+  map_.reserve(100);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 Header::Header(const Limit limit) noexcept {
-  if (limit <= 0) return;
-  limit_ = limit;
+  if (limit <= 0) {
+    map_.reserve(100);
+  }
+  map_.reserve(limit);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 bool Header::add_field(const span& field, const span& value) {
   if (field.is_empty()) return false;
   //-----------------------------------
-  if (size() < limit_) {
+  if (size() < map_.capacity()) {
     map_.emplace_back(field, value);
     return true;
   }
