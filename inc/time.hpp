@@ -15,6 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef HTTP_TIME_HPP
+#define HTTP_TIME_HPP
+
 #include <ctime>
 #include <string>
 #include <sstream>
@@ -33,7 +36,7 @@ namespace time {
 //
 // @note Returns an empty string if an error occurred
 //------------------------------------------------
-std::string from_time_t(const time_t time_);
+std::string from_time_t(const std::time_t time_);
 
 //------------------------------------------------
 // Get a {time_t} object from a {std::string} representing
@@ -58,3 +61,5 @@ std::string now();
 
 } //< namespace time
 } //< namespace http
+
+#endif //< HTTP_TIME_HPP
