@@ -1,0 +1,6 @@
+[submodule "http-parser"]
+	path = http-parser
+	url = git@github.com:nodejs/http-parser.git
+[submodule "uri"]
+	path = uri
+	url = git@github.com:includeos/uri.git

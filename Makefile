@@ -6,39 +6,55 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-CXX=clang++
+ifndef INCLUDEOS_INSTALL
+	INCLUDEOS_INSTALL=$(HOME)/IncludeOS_install
+endif
+
+CXX=clang++-3.8
+CC=clang-3.8
+
 CXXFLAGS=-std=c++14 -Wall -Wextra -Ofast
-INCLUDES=-I./inc -I./inc/parser
+CCFLAGS= -Wall -Wextra -Ofast
 
-SOURCES=src/request.cpp src/response.cpp src/version.cpp \
-		src/message.cpp src/header.cpp src/header_fields.cpp src/span.cpp src/time.cpp
+INCLUDES=-I./inc -I./http-parser -I$(INCLUDEOS_INSTALL)/packages/include
 
-OBJECTS=request.o response.o version.o message.o header.o header_fields.o span.o time.o
+CPP_SOURCES=${wildcard src/*.cpp}
+C_SOURCES=http-parser/http_parser.c
 
-DEP=inc/parser/http_parser.cpp
-DEP_OBJ=http_parser.o
+OBJECTS=${CPP_SOURCES:.cpp=.o} ${C_SOURCES:.c=.o}
 
-test: test.cpp objs
-	${CXX} ${CXXFLAGS} ${INCLUDES} -otest test.cpp ${OBJECTS} ${DEP_OBJ}
+LIB=lib/libhttp.a
 
-lib: objs
-	ar -cq libhttp.a ${OBJECTS} ${DEP_OBJ}
-	ranlib libhttp.a
-	mkdir lib
-	mv libhttp.a lib
-	rm *.o
-	
-objs: ${SOURCES}
-	${CXX} ${CXXFLAGS} ${INCLUDES} -c ${SOURCES} ${DEP}
+lib: ${OBJECTS}
+	mkdir -p lib
+	ar -cq $(LIB) ${OBJECTS}
+	ranlib $(LIB)
+
+test: test.cpp lib
+	${CXX} ${CXXFLAGS} ${INCLUDES} -o test test.cpp $(LIB)
+
+%.o: %.c
+	${CC} ${CCFLAGS} ${INCLUDES} -c $< -o $@
+
+%.o: %.cpp
+	${CXX} ${CXXFLAGS} ${INCLUDES} -c $< -o $@
+
+install:
+	mkdir -p ${INCLUDEOS_INSTALL}/packages/include/http
+	mkdir -p ${INCLUDEOS_INSTALL}/packages/lib/
+	cp -r inc/* ${INCLUDEOS_INSTALL}/packages/include/http
+	cp -r lib/* ${INCLUDEOS_INSTALL}/packages/lib/
 
 clean:
-	rm *.o test
+	$(RM) $(OBJECTS)
+	$(RM) $(LIB)
+	$(RM) test
