@@ -18,8 +18,8 @@
 #ifndef HTTP_HEADER_HPP
 #define HTTP_HEADER_HPP
 
-#include <list>
 #include <cctype>
+#include <vector>
 #include <cstring>
 #include <utility>
 #include <ostream>
@@ -45,7 +45,7 @@ private:
   // Internal class type aliases
   //-----------------------------------------------
   using Map_Type       = std::pair<span, span>;
-  using Field_Map      = std::list<Map_Type>;
+  using Field_Map      = std::vector<Map_Type>;
   using Const_Iterator = Field_Map::const_iterator;
   //-----------------------------------------------
 public:
@@ -53,7 +53,7 @@ public:
   // Default constructor that limits the amount
   // of fields that can be added to 100
   //-----------------------------------------------
-  explicit Header() = default;
+  explicit Header();
 
   //-----------------------------------------------
   // Constructor to specify the limit of how many
@@ -172,7 +172,6 @@ private:
   // Class data members
   //-----------------------------------------------
   Field_Map map_;
-  Limit     limit_ {100};
 
   //-----------------------------------------------
   // Find the location of a field within the set
