@@ -23,7 +23,7 @@ namespace http {
 
 static void configure_settings(http_parser_settings&) noexcept;
 
-static void execute_parser(Response*, http_parser*, http_parser_settings*, const std::string&) noexcept;
+static void execute_parser(Response*, http_parser&, http_parser_settings&, const std::string&) noexcept;
 
 ///////////////////////////////////////////////////////////////////////////////
 Response::Response(const Code code, const Version version) noexcept
@@ -37,11 +37,11 @@ Response::Response(std::string response, const Limit limit)
   , response_{std::move(response)}
   , field_{nullptr, 0}
 {
-  http_parser          _parser;
-  http_parser_settings _settings;
+  http_parser          parser;
+  http_parser_settings settings;
 
-  configure_settings(_settings);
-  execute_parser(this, &_parser, &_settings, response_);
+  configure_settings(settings);
+  execute_parser(this, parser, settings, response_);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -120,11 +120,11 @@ static void configure_settings(http_parser_settings& settings_) noexcept {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-static void execute_parser(Response* res_, http_parser* parser_, http_parser_settings* settings_,
-                           const std::string& data_) noexcept {
-  http_parser_init(parser_, HTTP_RESPONSE);
-  parser_->data = res_;
-  http_parser_execute(parser_, settings_, data_.data(), data_.size());
+static void execute_parser(Response* res, http_parser& parser, http_parser_settings& settings,
+                           const std::string& data) noexcept {
+  http_parser_init(&parser, HTTP_RESPONSE);
+  parser.data = res;
+  http_parser_execute(&parser, &settings, data.data(), data.size());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
