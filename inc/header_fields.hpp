@@ -34,6 +34,7 @@ extern Field Connection;
 extern Field Expect;
 extern Field From;
 extern Field Host;
+extern Field HTTP2_Settings;
 extern Field If_Match;
 extern Field If_Modified_Since;
 extern Field If_None_Match;
@@ -44,12 +45,14 @@ extern Field Proxy_Authorization;
 extern Field Range;
 extern Field Referer;
 extern Field TE;
+extern Field Upgrade;
 extern Field User_Agent;
 //------------------------------------------------
 // Response Fields
 //------------------------------------------------
 extern Field Accept_Ranges;
 extern Field Age;
+extern Field Date;
 extern Field ETag;
 extern Field Location;
 extern Field Proxy_Authenticate;
