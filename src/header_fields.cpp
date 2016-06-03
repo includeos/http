@@ -31,6 +31,7 @@ Field Connection          {"Connection"};
 Field Expect              {"Expect"};
 Field From                {"From"};
 Field Host                {"Host"};
+Field HTTP2_Settings      {"HTTP2-Settings"};
 Field If_Match            {"If-Match"};
 Field If_Modified_Since   {"If-Modified-Since"};
 Field If_None_Match       {"If-None-Match"};
@@ -41,12 +42,14 @@ Field Proxy_Authorization {"Proxy-Authorization"};
 Field Range               {"Range"};
 Field Referer             {"Referer"};
 Field TE                  {"TE"};
+Field Upgrade             {"Upgrade"};
 Field User_Agent          {"User-Agent"};
 //------------------------------------------------
 // Response Fields
 //------------------------------------------------
 Field Accept_Ranges       {"Accept-Ranges"};
 Field Age                 {"Age"};
+Field Date                {"Date"};
 Field ETag                {"ETag"};
 Field Location            {"Location"};
 Field Proxy_Authenticate  {"Proxy-Authenticate"};
