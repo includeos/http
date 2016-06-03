@@ -15,40 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef HTTP_COMMON_HPP
-#define HTTP_COMMON_HPP
-
-#include <string>
-#include <memory>
-#include <vector>
-#include <utility>
-#include <cstdint>
-
-/*
- * Symbol used within the HTTP/2 protocol which
- * specifies the maximum size of the payload in
- * a frame
- */
-#ifndef SETTINGS_MAX_FRAME_SIZE
-#define SETTINGS_MAX_FRAME_SIZE 16777215
-#endif
-
-namespace http {
-
-using URI   = std::string;
-using Limit = std::size_t;
-
-using CString   = const char*;
-using HeaderSet = std::vector<std::pair<CString, CString>>;
-
-using buffer_t = std::shared_ptr<uint8_t>;
-
-class Request;
-using Request_ptr = std::shared_ptr<Request>;
-
-class Response;
-using Response_ptr = std::shared_ptr<Response>;
-
-} //< namespace http
-
-#endif //< HTTP_COMMON_HPP
+namespace http2 {
+namespace connection_preface {
+//------------------------------------------------
+using CONNECTION_PREFACE = const char*;
+//------------------------------------------------
+CONNECTION_PREFACE client {"0x505249202a20485454502f322e300d0a0d0a534d0d0a0d0a"};
+CONNECTION_PREFACE server {""};
+//------------------------------------------------
+//------------------------------------------------
+} //< namespace connection_preface
+} //< namespace http2
