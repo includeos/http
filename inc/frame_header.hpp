@@ -15,62 +15,99 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef HTTP_FRAME_HPP
-#define HTTP_FRAME_HPP
+#ifndef HTTP_FRAME_HEADER_HPP
+#define HTTP_FRAME_HEADER_HPP
 
-#include <vector>
 #include <cstdint>
 
-#include "common.hpp"
+/*
+ * @macro
+ *
+ * Symbol to specify the maximum size of the payload in
+ * a frame
+ */
+#ifndef SETTINGS_MAX_FRAME_SIZE
+#define SETTINGS_MAX_FRAME_SIZE 16777215
+#endif
 
 namespace http2 {
 
 /**
- * @brief This class is used to represent a generic frame
+ * @brief This enum consist of the mappings between
+ * frame labels to their respective codes
+ */
+enum class Type : uint8_t {
+  DATA,
+  HEADERS,
+  PRIORITY,
+  RST_STREAM,
+  SETTINGS,
+  PUSH_PROMISE,
+  PING,
+  GOAWAY,
+  WINDOW_UPDATE,
+  CONTINUATION,
+  INVALID //< Internal symbol used to identify an erroneous type
+}; //< enum Type
+
+/**
+ * @brief This enum consist of the valid flags that can be set
+ * on a frame
+ */
+enum Flag : uint8_t {
+  NONE        = 0x00,
+  ACK         = 0x01,
+  END_STREAM  = 0x01,
+  END_HEADERS = 0x04,
+  PADDED      = 0x08,
+  PRIORITY    = 0x20
+}; //< enum Flag
+
+/**
+ * @brief This class is used to represent a frame header
  * in the HTTP/2 protocol
  */
-class Frame {
+class Frame_header {
 private:
   //-----------------------------------------------
   // Internal class type aliases
   //-----------------------------------------------
   using Length  = uint32_t;
-  using Type    = uint8_t;
   using Flags   = uint8_t;
   using SID     = uint32_t;
-  using Payload = std::vector<uint8_t>;
   //-----------------------------------------------
 public:
   /**
-   * Constructor to create a new frame
+   * @brief Constructor
    *
-   * @param type    - The type of frame
-   * @param flags   - The flags to set on the frame
-   * @param id      - The id of the stream
-   * @param payload - The data to transport
+   * @param length - The length of the payload
+   * @param type   - The type of frame
+   * @param flags  - The flags to set on the frame
+   * @param id     - The id of the associated stream
    */
-  explicit Frame(const Type type, const Flags flags, const SID id, const Payload& payload);
+  explicit Frame_header(const Length length = 0U, const Type type = Type::INVALID,
+                        const Flags flags = NONE, const SID id = 0U) noexcept;
 
   /**
    * @brief Get the size of the payload
    *
    * @return The size of the payload
    */
-  uint32_t length() const noexcept;
+  Length length() const noexcept;
 
   /**
    * @brief Get the type of frame
    *
    * @return The type of frame
    */
-  uint8_t type() const noexcept;
+  Type type() const noexcept;
 
   /**
    * @brief Get the flags set on the frame
    *
    * @return The flags set on the frame
    */
-  uint8_t flags() const noexcept;
+  Flags flags() const noexcept;
 
   /**
    * @brief Get the id of the stream this frame
@@ -79,33 +116,27 @@ public:
    * @return The id of the stream this frame
    * is associated with
    */
-  uint32_t id() const noexcept;
+  SID id() const noexcept;
 
   /**
-   * @brief Get a read-only reference to the payload in this
-   * frame
+   * @brief Check if the frame is valid
    *
-   * @return A read-only reference to the payload in this
-   * frame
+   * @return true if the frame is valid, false otherwise
    */
-  const Payload& payload() const noexcept;
+  bool valid() const noexcept;
 private:
   static constexpr uint16_t SETTINGS_MIN_FRAME_SIZE {16384};
 
   //-----------------------------------------------
-  // Frame Headers
+  // Class Data Members
   //-----------------------------------------------
-  Length  length_{};
-  Type    type_{};
-  Flags   flags_{};
-  SID     stream_id_{};
-
+  Length  length_;
+  Type    type_;
+  Flags   flags_;
+  SID     stream_id_;
   //-----------------------------------------------
-  // Frame Payload
-  //-----------------------------------------------
-  Payload payload_;
-}; //< class Frame
+}; //< class Frame_header
 
 } //< namespace http2
 
-#endif //< HTTP_FRAME_HPP
+#endif //< HTTP_FRAME_HEADER_HPP

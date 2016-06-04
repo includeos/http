@@ -15,49 +15,50 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <frame.hpp>
+#include <frame_header.hpp>
 
 namespace http2 {
 
 ///////////////////////////////////////////////////////////////////////////////
-Frame::Frame(const Type type, const Flags flags, const SID id, const Payload& payload)
+Frame_header::Frame_header(const Length length, const Type type,
+                           const Flags  flags,  const SID id) noexcept
   : length_{}
-  , type_{type}
+  , type_{}
   , flags_{flags}
   , stream_id_{id}
-  , payload_{}
 {
-  auto payload_size = payload.size();
-  if (payload_size > SETTINGS_MAX_FRAME_SIZE) {
-    throw "FRAME_SIZE_ERROR";
+  if (length > SETTINGS_MAX_FRAME_SIZE) {
+    type_ = Type::INVALID;
+    return;
   }
-  payload_ = payload;
-  length_  = payload_size;
+
+  length_ = length;
+  type_ = type;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-uint32_t Frame::length() const noexcept {
+uint32_t Frame_header::length() const noexcept {
   return length_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-uint8_t Frame::type() const noexcept {
+Type Frame_header::type() const noexcept {
   return type_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-uint8_t Frame::flags() const noexcept {
+Frame_header::Flags Frame_header::flags() const noexcept {
   return flags_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-uint32_t Frame::id() const noexcept {
+uint32_t Frame_header::id() const noexcept {
   return stream_id_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const Frame::Payload& Frame::payload() const noexcept {
-  return payload_;
+bool Frame_header::valid() const noexcept {
+  return not (type_ == Type::INVALID);
 }
 
 } //< namespace http2

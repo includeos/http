@@ -24,15 +24,6 @@
 #include <utility>
 #include <cstdint>
 
-/*
- * Symbol used within the HTTP/2 protocol which
- * specifies the maximum size of the payload in
- * a frame
- */
-#ifndef SETTINGS_MAX_FRAME_SIZE
-#define SETTINGS_MAX_FRAME_SIZE 16777215
-#endif
-
 namespace http {
 
 using URI   = std::string;

@@ -20,7 +20,7 @@ namespace connection_preface {
 //------------------------------------------------
 using CONNECTION_PREFACE = const char*;
 //------------------------------------------------
-CONNECTION_PREFACE client {"0x505249202a20485454502f322e300d0a0d0a534d0d0a0d0a"};
+CONNECTION_PREFACE client {"PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"};
 CONNECTION_PREFACE server {""};
 //------------------------------------------------
 //------------------------------------------------
