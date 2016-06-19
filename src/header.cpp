@@ -28,8 +28,9 @@ Header::Header() {
 Header::Header(const Limit limit) noexcept {
   if (limit <= 0) {
     map_.reserve(100);
+  } else {
+    map_.reserve(limit);
   }
-  map_.reserve(limit);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
