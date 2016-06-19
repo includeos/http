@@ -139,7 +139,10 @@ public:
   operator std::string () const;
   //-----------------------------------
 
-  span& field() noexcept;
+  span& field() noexcept {
+    return field_;
+  }
+  
 private:
   //------------------------------
   // Class data members
