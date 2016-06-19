@@ -15,30 +15,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Compiler Settings #
 CXX=clang++
+CC=clang
+
+# Compiler Flag Settings #
 CXXFLAGS=-std=c++14 -Wall -Wextra -Ofast
+CCFLAGS= -std=c11 -Wall -Wextra -Ofast
+
+# Header File Locations #
 INCLUDES=-I./inc -I./inc/parser
 
-SOURCES=src/request.cpp src/response.cpp src/version.cpp \
-		src/message.cpp src/header.cpp src/header_fields.cpp src/span.cpp src/time.cpp
+# Source Code Locations #
+CPP_SOURCES=${wildcard src/*.cpp}
+CPP_SOURCES+=${wildcard inc/parser/*.cpp}
 
-OBJECTS=request.o response.o version.o message.o header.o header_fields.o span.o time.o
+# Object Files #
+OBJECTS=${CPP_SOURCES:.cpp=.o}
 
-DEP=inc/parser/http_parser.cpp
-DEP_OBJ=http_parser.o
+LIB=lib/libhttp.a
 
-test: test.cpp objs
-	${CXX} ${CXXFLAGS} ${INCLUDES} -otest test.cpp ${OBJECTS} ${DEP_OBJ}
+lib: ${OBJECTS}
+	mkdir -p lib
+	ar -cq ${LIB} ${OBJECTS}
+	ranlib ${LIB}
 
-lib: objs
-	ar -cq libhttp.a ${OBJECTS} ${DEP_OBJ}
-	ranlib libhttp.a
-	mkdir lib
-	mv libhttp.a lib
-	rm *.o
-	
-objs: ${SOURCES}
-	${CXX} ${CXXFLAGS} ${INCLUDES} -c ${SOURCES} ${DEP}
+test: test.cpp lib
+	${CXX} ${CXXFLAGS} ${INCLUDES} -otest test.cpp ${LIB}
+
+%.o: %.cpp
+	${CXX} ${CXXFLAGS} ${INCLUDES} -c $< -o $@
 
 clean:
-	rm *.o test
+	${RM} ${OBJECTS}
+	${RM} -rf lib/
+	${RM} test
