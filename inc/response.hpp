@@ -6,9 +6,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,170 +19,157 @@
 #define HTTP_RESPONSE_HPP
 
 #include "message.hpp"
-#include "version.hpp"
 #include "status_codes.hpp"
-#include "status_code_constants.hpp"
+#include "version.hpp"
 
 namespace http {
 
-//--------------------------------
-// This class is used to represent
-// an http response message
-//--------------------------------
+///
+/// This class is used to represent
+/// an http response message
+///
 class Response : public Message {
 public:
-  //------------------------------
-  // Constructor to set up a response
-  // by providing information for the
-  // status line of the response message
-  //
-  // @param code    - The status code
-  // @param version - The version of the message
-  //------------------------------
-  explicit Response(const Code code = OK, const Version version = Version{1U, 1U}) noexcept;
+  ///
+  /// Constructor to set up a response
+  /// by providing information for the
+  /// status line of the response message
+  ///
+  /// @param code    The status code
+  /// @param version The version of the message
+  ///
+  explicit Response(const Version version = Version{1U, 1U}, const Code code = OK) noexcept;
 
-  //----------------------------------------
-  // Constructor to construct a response
-  // message from the incoming character
-  // stream of data which is a <std::string>
-  // object
-  //
-  // @param response - The character stream of data
-  //
-  // @param limit - Capacity of how many fields can
-  //                be added
-  //----------------------------------------
-  explicit Response(std::string response, const Limit limit = 100);
+  ///
+  /// Constructor to construct a response
+  /// message from the incoming character
+  /// stream of data which is a {std::string}
+  /// object
+  ///
+  /// @param response The character stream of data
+  ///
+  /// @param limit Capacity of how many fields can
+  /// be added
+  ///
+  explicit Response(std::string response, const std::size_t limit = 25);
 
-  //----------------------------------------
-  // Default copy constructor
-  //----------------------------------------
+  ///
+  /// Default copy constructor
+  ///
   Response(const Response&) = default;
 
-  //----------------------------------------
-  // Default move constructor
-  //----------------------------------------
+  ///
+  /// Default move constructor
+  ///
   Response(Response&&) = default;
 
-  //------------------------------
-  // Default destructor
-  //------------------------------
+  ///
+  /// Default destructor
+  ///
   ~Response() noexcept = default;
 
-  //----------------------------------------
-  // Default copy assignment operator
-  //----------------------------------------
+  ///
+  /// Default copy assignment operator
+  ///
   Response& operator = (const Response&) = default;
 
-  //----------------------------------------
-  // Default move assignment operator
-  //----------------------------------------
+  ///
+  /// Default move assignment operator
+  ///
   Response& operator = (Response&&) = default;
 
-  //------------------------------
-  // Get the status code of this
-  // message
-  //
-  // @return - The status code of this
-  //           message
-  //------------------------------
+  ///
+  /// Get the status code of this
+  /// message
+  ///
+  /// @return The status code of this
+  /// message
+  ///
   Code status_code() const noexcept;
 
-  //------------------------------
-  // Change the status code of this
-  // message
-  //
-  // @param code - The new status code to set
-  //               on this message
-  //
-  // @return - The object that invoked this method
-  //------------------------------
+  ///
+  /// Change the status code of this
+  /// message
+  ///
+  /// @param code The new status code to set
+  /// on this message
+  ///
+  /// @return The object that invoked this method
+  ///
   Response& set_status_code(const Code code) noexcept;
 
-  //----------------------------------------
-  // Get the version of the response message
-  //
-  // @return - The version of the response
-  //----------------------------------------
+  ///
+  /// Get the version of the response message
+  ///
+  /// @return The version of the response
+  ///
   const Version version() const noexcept;
 
-  //----------------------------------------
-  // Set the version of the response message
-  //
-  // @param version - The version to set
-  //
-  // @return - The object that invoked this
-  //           method
-  //----------------------------------------
+  ///
+  /// Set the version of the response message
+  ///
+  /// @param version The version to set
+  ///
+  /// @return The object that invoked this
+  /// method
+  ///
   Response& set_version(const Version version) noexcept;
 
-  //----------------------------------------
-  // Reset the response message as if it was now
-  // default constructed
-  //
-  // @return - The object that invoked this method
-  //----------------------------------------
+  ///
+  /// Reset the response message as if it was now
+  /// default constructed
+  ///
+  /// @return The object that invoked this method
+  ///
   virtual Response& reset() noexcept override;
-  
-  //-----------------------------------
-  // Get a string representation of this
-  // class
-  //
-  // @return - A string representation
-  //-----------------------------------
+
+  ///
+  /// Get a string representation of this
+  /// class
+  ///
+  /// @return A string representation
+  ///
   virtual std::string to_string() const override;
 
-  //-----------------------------------
-  // Operator to transform this class
-  // into string form
-  //-----------------------------------
+  ///
+  /// Operator to transform this class
+  /// into string form
+  ///
   operator std::string () const;
-  //-----------------------------------
-
-  span& field() noexcept {
-    return field_;
-  }
-  
 private:
-  //------------------------------
-  // Class data members
-  //------------------------------
+  ///
+  /// Class data members
+  ///
   const std::string response_;
-  span              field_;
 
-  //----------------------------------------
-  // Status-line parts
-  //----------------------------------------
+  ///
+  /// Status-line parts
+  ///
   Code    code_;
   Version version_;
 }; //< class Response
 
 /**--v----------- Helper Functions -----------v--**/
 
-//----------------------------------------
-// Add a set of headers to a response message
-//----------------------------------------
-Response& operator << (Response& res, const HeaderSet& headers);
+///
+/// Add a set of headers to a response message
+///
+Response& operator << (Response& res, const Header_set& headers);
 
 /**--^----------- Helper Functions -----------^--**/
 
 /**--v----------- Implementation Details -----------v--**/
 
 ///////////////////////////////////////////////////////////////////////////////
+template<typename = void>
 inline Response_ptr make_response(std::string response) {
-  return std::make_shared<Response>(std::move(response));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-inline Response_ptr make_response(buffer_t buf, const size_t len) {
-  return make_response(std::string{reinterpret_cast<char*>(buf.get()), len});
+  return std::make_unique<Response>(std::move(response));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 inline std::ostream& operator << (std::ostream& output_device, const Response& res) {
   return output_device << res.to_string();
 }
-
 
 /**--^----------- Implementation Details -----------^--**/
 

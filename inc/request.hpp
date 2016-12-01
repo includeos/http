@@ -24,234 +24,201 @@
 
 namespace http {
 
-//----------------------------------------
-// This class is used to represent
-// an http request message
-//----------------------------------------
+///
+/// This class is used to represent
+/// an http request message
+///
 class Request : public Message {
 public:
-  //----------------------------------------
-  // Default constructor
-  //
-  // Constructs a request message as follows:
-  //
-  // <GET / HTTP/1.1>
-  //----------------------------------------
+  ///
+  /// Default constructor
+  ///
   explicit Request() = default;
 
-  //----------------------------------------
-  // Constructor to construct a request
-  // message from the incoming character
-  // stream of data which is a <std::string>
-  // object
-  //
-  // @param request - The character stream of data
-  //
-  // @param limit - Capacity of how many fields can
-  //                be added
-  //----------------------------------------
-  explicit Request(std::string request, const Limit limit = 100);
+  ///
+  /// Constructor to construct a request
+  /// message from the incoming character
+  /// stream of data which is a <std::string>
+  /// object
+  ///
+  /// @param request The character stream of data
+  ///
+  /// @param limit Capacity of how many fields can
+  /// be added
+  ///
+  explicit Request(std::string request, const std::size_t limit = 25);
 
-  //----------------------------------------
-  // Default copy constructor
-  //----------------------------------------
+  ///
+  /// Default copy constructor
+  ///
   Request(Request&) = default;
 
-  //----------------------------------------
-  // Default move constructor
-  //----------------------------------------
+  ///
+  /// Default move constructor
+  ///
   Request(Request&&) = default;
 
-  //----------------------------------------
-  // Default destructor
-  //----------------------------------------
+  ///
+  /// Default destructor
+  ///
   ~Request() noexcept = default;
 
-  //----------------------------------------
-  // Default copy assignment operator
-  //----------------------------------------
+  ///
+  /// Default copy assignment operator
+  ///
   Request& operator = (Request&) = default;
 
-  //----------------------------------------
-  // Default move assignment operator
-  //----------------------------------------
+  ///
+  /// Default move assignment operator
+  ///
   Request& operator = (Request&&) = default;
 
-  //----------------------------------------
-  // Get the method of the request message
-  //
-  // @return - The method of the request
-  //----------------------------------------
+  ///
+  /// Get the method of the request message
+  ///
+  /// @return The method of the request
+  ///
   Method method() const noexcept;
 
-  //----------------------------------------
-  // Set the method of the request message
-  //
-  // @param method - The method to set
-  //
-  // @return - The object that invoked this
-  //           method
-  //----------------------------------------
+  ///
+  /// Set the method of the request message
+  ///
+  /// @param method The method to set
+  ///
+  /// @return The object that invoked this
+  /// method
+  ///
   Request& set_method(const Method method);
 
-  //----------------------------------------
-  // Get the URI of the request message
-  //
-  // @return - The URI of the request
-  //----------------------------------------
+  ///
+  /// Get a reference to the URI object of the
+  /// request message
+  ///
+  /// @return The URI of the request
+  ///
   const URI& uri() const noexcept;
 
-  //----------------------------------------
-  // Set the URI of the request message
-  //
-  // @param uri - The URI to set
-  //
-  // @return - The object that invoked this
-  //           method
-  //----------------------------------------
+  ///
+  /// Set the URI of the request message
+  ///
+  /// @param uri The URI to set
+  ///
+  /// @return The object that invoked this
+  /// method
+  ///
   Request& set_uri(const URI& uri);
 
-  //----------------------------------------
-  // Get the version of the request message
-  //
-  // @return - The version of the request
-  //----------------------------------------
+  ///
+  /// Get the version of the request message
+  ///
+  /// @return The version of the request
+  ///
   const Version& version() const noexcept;
 
-  //----------------------------------------
-  // Set the version of the request message
-  //
-  // @param version - The version to set
-  //
-  // @return - The object that invoked this
-  //           method
-  //----------------------------------------
+  ///
+  /// Set the version of the request message
+  ///
+  /// @param version The version to set
+  ///
+  /// @return The object that invoked this
+  /// method
+  ///
   Request& set_version(const Version& version) noexcept;
 
-  //----------------------------------------
-  // Get the value associated with the name
-  // field from a query string
-  //
-  // @tparam (std::string) name - The name to find the associated
-  //                              value
-  //
-  // @return - The associated value if name was found,
-  //           an empty string otherwise
-  //----------------------------------------
-  template <typename Name>
-  std::string query_value(Name&& name) const noexcept;
+  ///
+  /// Get the value associated with the name
+  /// from a query string
+  ///
+  /// @param name The name to find the associated value
+  ///
+  /// @return The associated value if name was found,
+  /// an empty string otherwise
+  ///
+  template<typename = void>
+  std::experimental::string_view query_value(const std::experimental::string_view name) noexcept;
 
-  //----------------------------------------
-  // Get the value associated with the name
-  // field from the message body in a post request
-  //
-  // @tparam (std::string) name - The name to find the associated
-  //                              value
-  //
-  // @return - The associated value if name was found,
-  //           an empty string otherwise
-  //----------------------------------------
-  template <typename Name>
-  std::string post_value(Name&& name) const noexcept;
+  ///
+  /// Get the value associated with the name
+  /// field from the message body in a post request
+  ///
+  /// @param name The name to find the associated
+  /// value
+  ///
+  /// @return The associated value if name was found,
+  /// an empty string otherwise
+  ///
+  template<typename = void>
+  std::experimental::string_view post_value(const std::experimental::string_view name) const noexcept;
 
-  //----------------------------------------
-  // Reset the request message as if it was now
-  // default constructed
-  //
-  // @return - The object that invoked this method
-  //----------------------------------------
+  ///
+  /// Reset the request message as if it was now
+  /// default constructed
+  ///
+  /// @return The object that invoked this method
+  ///
   virtual Request& reset() noexcept override;
 
-  //----------------------------------------
-  // Get a string representation of this
-  // class
-  //
-  // @return - A string representation
-  //----------------------------------------
+  ///
+  /// Get a string representation of this
+  /// class
+  ///
+  /// @return A string representation
+  ///
   virtual std::string to_string() const override;
 
-  //----------------------------------------
-  // Operator to transform this class
-  // into string form
-  //----------------------------------------
+  ///
+  /// Operator to transform this class
+  /// into string form
+  ///
   operator std::string () const;
-  //----------------------------------------
-
-  span& field() noexcept;
 private:
-  //----------------------------------------
-  // Class data members
-  //----------------------------------------
+  ///
+  /// Class data members
+  ///
   const std::string request_;
-  span              field_;
 
-  //----------------------------------------
-  // Request-line parts
-  //----------------------------------------
+  ///
+  /// Request-line parts
+  ///
   Method  method_{GET};
   URI     uri_{"/"};
   Version version_{1U, 1U};
-
-  //----------------------------------------
-  // Find the value associated with a name
-  // in the following format:
-  //
-  // name=value
-  //
-  // @tparam (std::string) data - The data to search through
-  // @tparam (std::string) name - The name to find the associated
-  //                              value
-  //
-  // @return - The associated value if name was found,
-  //           an empty string otherwise
-  //----------------------------------------
-  template <typename Data, typename Name>
-  std::string get_value(Data&& data, Name&& name) const noexcept;
 }; //< class Request
 
 /**--v----------- Implementation Details -----------v--**/
 
 ///////////////////////////////////////////////////////////////////////////////
-template <typename Name>
-inline std::string Request::query_value(Name&& name) const noexcept {
-  return get_value(uri(), std::forward<Name>(name));
+template<typename>
+inline std::experimental::string_view Request::query_value(const std::experimental::string_view name) noexcept {
+  return uri_.query(name.to_string());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-template <typename Name>
-inline std::string Request::post_value(Name&& name) const noexcept {
-  if (method() not_eq POST) return std::string{};
-  return get_value(get_body(), std::forward<Name>(name));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-template <typename Data, typename Name>
-inline std::string Request::get_value(Data&& data, Name&& name) const noexcept {
-  if (data.empty() || name.empty()) return std::string{};
+template<typename>
+inline std::experimental::string_view Request::post_value(const std::experimental::string_view name) const noexcept {
+  if ((method() not_eq POST) or name.empty() or body().empty()) {
+    return {};
+  }
   //---------------------------------
-  auto target = data.find(std::forward<Name>(name));
+  const auto target = body().find(name);
   //---------------------------------
-  if (target == std::string::npos) return std::string{};
+  if (target == std::experimental::string_view::npos) return {};
   //---------------------------------
-  auto focal_point = data.substr(target);
+  auto focal_point = body().substr(target);
   //---------------------------------
   focal_point = focal_point.substr(0, focal_point.find_first_of('&'));
   //---------------------------------
-  auto lock_and_load = focal_point.find('=');
+  const auto lock_and_load = focal_point.find('=');
   //---------------------------------
-  if (lock_and_load == std::string::npos) return std::string{};
+  if (lock_and_load == std::experimental::string_view::npos) return {};
   //---------------------------------
   return focal_point.substr(lock_and_load + 1);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+template<typename = void>
 inline Request_ptr make_request(std::string request) {
-  return std::make_shared<Request>(std::move(request));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-inline Request_ptr make_request(buffer_t buf, const size_t len) {
-  return make_request(std::string{reinterpret_cast<char*>(buf.get()), len});
+  return std::make_unique<Request>(std::move(request));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

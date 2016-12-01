@@ -6,9 +6,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,24 +21,24 @@ namespace http {
 
 ///////////////////////////////////////////////////////////////////////////////
 Header::Header() {
-  map_.reserve(100);
+  fields_.reserve(25);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Header::Header(const Limit limit) noexcept {
-  if (limit <= 0) {
-    map_.reserve(100);
+Header::Header(const std::size_t limit) noexcept {
+  if (limit <= 0U) {
+    fields_.reserve(25U);
   } else {
-    map_.reserve(limit);
+    fields_.reserve(limit);
   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Header::add_field(const span& field, const span& value) {
-  if (field.is_empty()) return false;
+bool Header::add_field(const std::experimental::string_view field, const std::experimental::string_view value) {
+  if (field.empty()) return false;
   //-----------------------------------
-  if (size() < map_.capacity()) {
-    map_.emplace_back(field, value);
+  if (size() < fields_.capacity()) {
+    fields_.emplace_back(field, value);
     return true;
   }
   //-----------------------------------
@@ -46,14 +46,13 @@ bool Header::add_field(const span& field, const span& value) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Header::set_field(const span& field, const span& value) {
-  if (field.is_empty() || value.is_empty()) return false;
+bool Header::set_field(const std::experimental::string_view field, const std::experimental::string_view value) {
+  if (field.empty() || value.empty()) return false;
   //-----------------------------------
-  auto target = find(field);
+  const auto target = find(field);
   //-----------------------------------
-  if (target not_eq map_.end()) {
-    const_cast<span&>(target->second).data = value.data;
-    const_cast<span&>(target->second).len  = value.len;
+  if (target not_eq fields_.cend()) {
+    const_cast<std::experimental::string_view&>(target->second) = value;
     return true;
   }
   //-----------------------------------
@@ -61,65 +60,63 @@ bool Header::set_field(const span& field, const span& value) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Header::has_field(const span& field) const noexcept {
-  return find(field) not_eq map_.end();
+bool Header::has_field(const std::experimental::string_view field) const noexcept {
+  return find(field) not_eq fields_.cend();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const span& Header::get_value(const span& field) const noexcept {
-  return find(field)->second;
+std::experimental::string_view Header::value(const std::experimental::string_view field) const noexcept {
+  if (field.empty()) return field;
+  const auto it = find(field);
+  return (it not_eq fields_.cend()) ? it->second : std::experimental::string_view{};
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 bool Header::is_empty() const noexcept {
-  return map_.empty();
+  return fields_.empty();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Limit Header::size() const noexcept {
-  return map_.size();
+std::size_t Header::size() const noexcept {
+  return fields_.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Header::erase(const span& field) noexcept {
-  auto target = find(field);
+void Header::erase(const std::experimental::string_view field) noexcept {
+  Const_iterator target;
   //-----------------------------------
-  if (target not_eq map_.end()) map_.erase(target);
+  while ((target = find(field)) not_eq fields_.cend()) fields_.erase(target);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void Header::clear() noexcept {
-  map_.clear();
+  fields_.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-static std::string string_to_lower_case(std::string string) {
-  std::transform(string.begin(), string.end(),
-                 string.begin(), ::tolower);
-  //-----------------------------------
-  return string;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-Header::Const_Iterator Header::find(const span& field) const noexcept {
-  if (field.is_empty()) return map_.end();
+Header::Const_iterator Header::find(const std::experimental::string_view field) const noexcept {
+  if (field.empty()) return fields_.cend();
   //-----------------------------------
   return
-  std::find_if(map_.begin(), map_.end(), [&field](const auto& f){
-    return string_to_lower_case(f.first.to_string())
-           ==
-           string_to_lower_case(field.to_string());
-  });
+    std::find_if(fields_.cbegin(), fields_.cend(), [&field](const auto _) {
+      return (_.first.length() == field.length())
+        and std::equal(_.first.data(), _.first.data() + _.first.length(), field.data(), [](const auto a, const auto b) {
+          return std::tolower(a) == std::tolower(b);
+        });
+    });
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 std::ostream& operator << (std::ostream& output_device, const Header& header) {
-  for (const auto& field : header.map_) {
-    output_device << field.first  << ": "
-                  << field.second << "\r\n";
+  if (not header.is_empty()) {
+    for (const auto field : header.fields_) {
+      output_device << field.first  << ": "
+                    << field.second << "\r\n";
+    }
+    //-----------------------------------
+    output_device << "\r\n";
   }
-  //-----------------------------------
-  return output_device << "\r\n";
+  return output_device;
 }
 
 } //< namespace http

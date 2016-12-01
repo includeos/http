@@ -6,9 +6,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,7 @@ Version::Version(const unsigned major, const unsigned minor) noexcept:
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
-unsigned Version::get_major() const noexcept {
+unsigned Version::major() const noexcept {
   return major_;
 }
 
@@ -36,7 +36,7 @@ void Version::set_major(const unsigned major) noexcept {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-unsigned Version::get_minor() const noexcept {
+unsigned Version::minor() const noexcept {
   return minor_;
 }
 
@@ -62,9 +62,9 @@ Version::operator std::string () const {
 
 ///////////////////////////////////////////////////////////////////////////////
 bool operator == (const Version& lhs, const Version& rhs) noexcept {
-  return lhs.get_major() == rhs.get_major()
+  return lhs.major() == rhs.major()
          and
-         lhs.get_minor() == rhs.get_minor();
+         lhs.minor() == rhs.minor();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,16 +74,16 @@ bool operator != (const Version& lhs, const Version& rhs) noexcept {
 
 ///////////////////////////////////////////////////////////////////////////////
 bool operator < (const Version& lhs, const Version& rhs) noexcept {
-  return lhs.get_major() < rhs.get_major()
+  return lhs.major() < rhs.major()
          or
-         lhs.get_minor() < rhs.get_minor();
+         lhs.minor() < rhs.minor();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 bool operator > (const Version& lhs, const Version& rhs) noexcept {
-  return lhs.get_major() > rhs.get_major()
+  return lhs.major() > rhs.major()
          or
-         lhs.get_minor() > rhs.get_minor();
+         lhs.minor() > rhs.minor();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

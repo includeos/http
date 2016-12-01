@@ -6,9 +6,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ int main() {
   //--------------------------------------------------------------
   // Request
   //--------------------------------------------------------------
-  auto ingress = "POST /greeting.txt HTTP/1.1\r\n"
+  auto ingress = "POST http://includeos.server.acorn:5050/greeting.txt?name=rico&age=28 HTTP/1.1\r\n"
                  "Host: includeos.server.acorn:5050\r\n"
                  "Accept-Encoding: gzip, deflate, sdch\r\n"
                  "Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4\r\n"
@@ -44,7 +44,13 @@ int main() {
 
   auto req = http::make_request(move(ingress));
 
-  std::cout << req->get_body() << '\n';
+  std::cout << "Request functionality\n";
+  std::cout << req->header().value("Host") << '\n';
+  std::cout << req->body()                 << '\n';
+  std::cout << req->query_value("name")    << '\n';
+  std::cout << req->uri().port()           << '\n';
+  std::cout << req->uri().path()           << '\n';
+  std::cout << req->uri().host()           << '\n';
 
   //--------------------------------------------------------------
   // Response
@@ -54,6 +60,7 @@ int main() {
 
   auto res = http::make_response(move(egress));
 
+  std::cout << "\nResponse functionality\n";
   std::cout << res->version() << " " << res->status_code() << '\n'
-            << res->header_value("Server") << '\n';
+            << res->header().value("Server") << '\n';
 }

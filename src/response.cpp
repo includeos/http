@@ -6,18 +6,17 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <response.hpp>
-
 #include <http_parser.h>
+#include <response.hpp>
 
 namespace http {
 
@@ -26,16 +25,15 @@ static void configure_settings(http_parser_settings&) noexcept;
 static void execute_parser(Response*, http_parser&, http_parser_settings&, const std::string&) noexcept;
 
 ///////////////////////////////////////////////////////////////////////////////
-Response::Response(const Code code, const Version version) noexcept
+Response::Response(const Version version, const Code code) noexcept
   : code_{code}
   , version_{version}
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
-Response::Response(std::string response, const Limit limit)
+Response::Response(std::string response, const std::size_t limit)
   : Message{limit}
   , response_{std::move(response)}
-  , field_{nullptr, 0}
 {
   http_parser          parser;
   http_parser_settings settings;
@@ -94,14 +92,13 @@ static void configure_settings(http_parser_settings& settings_) noexcept {
 
   settings_.on_header_field = [](http_parser* parser, const char* at, size_t length) {
     auto res = reinterpret_cast<Response*>(parser->data);
-    res->field().data = at;
-    res->field().len  = length;
+    res->set_private_field(at, length);
     return 0;
   };
 
   settings_.on_header_value = [](http_parser* parser, const char* at, size_t length) {
     auto res = reinterpret_cast<Response*>(parser->data);
-    res->add_header(res->field(), {at, length});
+    res->header().add_field(res->private_field(), {at, length});
     return 0;
   };
 
@@ -128,9 +125,9 @@ static void execute_parser(Response* res, http_parser& parser, http_parser_setti
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Response& operator << (Response& res, const HeaderSet& headers) {
+Response& operator << (Response& res, const Header_set& headers) {
   for (const auto& field : headers) {
-    res.add_header(field.first, field.second);
+    res.header().add_field(field.first, field.second);
   }
   return res;
 }
