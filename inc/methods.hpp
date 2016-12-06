@@ -19,22 +19,34 @@
 #define HTTP_METHODS_HPP
 
 #include <array>
-#include <string>
+#include <experimental/string_view>
 #include <ostream>
+#include <unordered_map>
 
 namespace http {
 
+  ///
+  /// This type consist of mappings from HTTP method strings
+  /// to their respective internal code values
+  ///
   enum Method {
     GET, POST, PUT, DELETE, OPTIONS, HEAD, TRACE, CONNECT, PATCH,
     INVALID = 0xffff
-  };
+  }; //< enum Method
 
   namespace method {
 
-    /** Get method string from method code **/
-    inline const std::string& str(const Method m) {
+    ///
+    /// Get the string representation from an HTTP method code
+    ///
+    /// @param m The HTTP method code
+    ///
+    /// @return The string representation of the code
+    ///
+    template<typename = void>
+    std::experimental::string_view str(const Method m) noexcept {
 
-      static std::array<std::string, 10> strings
+      const static std::array<std::experimental::string_view, 10> views
       {
         {
          "GET", "POST", "PUT", "DELETE", "OPTIONS",
@@ -42,42 +54,69 @@ namespace http {
         }
       };
 
-      if ((m >= 0) and (m < (strings.size() - 1))) {
-        return strings[m];
+      const auto e = (views.size() - 1);
+
+      if ((m >= 0) and (m < e)) {
+        return views[m];
       }
 
-      return strings[strings.size() - 1];
+      return views[e];
     }
 
-    /**
-     * Get a code mapping from an HTTP
-     * method
-     *
-     * @param method - The HTTP method
-     *
-     * @return - The code mapped to the method
-     **/
-    inline Method code(const std::string& method) noexcept {
+    ///
+    /// Get a code mapping from an HTTP method string
+    ///
+    /// @param method The HTTP method code
+    ///
+    /// @return The code mapped to the method string
+    ///
+    template<typename = void>
+    Method code(const std::experimental::string_view method) noexcept {
 
-      if (method == str(GET))     return GET;
-      if (method == str(POST))    return POST;
-      if (method == str(PUT))     return PUT;
-      if (method == str(DELETE))  return DELETE;
-      if (method == str(OPTIONS)) return OPTIONS;
-      if (method == str(HEAD))    return HEAD;
-      if (method == str(TRACE))   return TRACE;
-      if (method == str(CONNECT)) return CONNECT;
-      if (method == str(PATCH))   return PATCH;
+      const static std::unordered_map<std::experimental::string_view, Method> code_map {
+        {"GET",     GET},
+        {"POST",    POST},
+        {"PUT",     PUT},
+        {"DELETE",  DELETE},
+        {"OPTIONS", OPTIONS},
+        {"HEAD",    HEAD},
+        {"TRACE",   TRACE},
+        {"CONNECT", CONNECT},
+        {"PATCH",   PATCH}
+      };
 
-      return INVALID;
+      const auto it = code_map.find(method);
+
+      return (it not_eq code_map.cend()) ? it->second : INVALID;
     }
 
-  } // namespace method
+    template<typename = void>
+    inline bool is_content_length_allowed(const Method method) noexcept {
+      return (method == POST) or (method == PUT);
+    }
 
+    template<typename = void>
+    inline bool is_content_length_required(const Method method) noexcept {
+      return (method == POST) or (method == PUT);
+    }
+
+  } //< namespace method
+
+  ///
+  /// Operator to stream an HTTP method code into the specified
+  /// output device
+  ///
+  /// @param output_device The output device to stream the
+  /// HTTP method code into
+  ///
+  /// @param m An HTTP method code
+  ///
+  /// @return Reference to the specified output device
+  ///
   inline std::ostream& operator << (std::ostream& output_device, const Method m) {
     return output_device << http::method::str(m);
   }
 
-} // namespace http
+} //< namespace http
 
-#endif // HTTP_METHODS_HPP
+#endif //< HTTP_METHODS_HPP

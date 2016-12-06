@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // This file is a part of the IncludeOS unikernel - www.includeos.org
 //
 // Copyright 2015-2016 Oslo and Akershus University College of Applied Sciences
@@ -15,29 +16,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef HTTP_COMMON_HPP
-#define HTTP_COMMON_HPP
+#pragma once
+#ifndef ___HTTP_API___
+#define ___HTTP_API___
 
-#include <cstdint>
-#include <experimental/string_view>
-#include <memory>
-#include <string>
-#include <uri>
-#include <utility>
-#include <vector>
+#include <response.hpp>
+#include <request.hpp>
 
-namespace http {
-
-using URI = uri::URI;
-
-using Header_set = std::vector<std::pair<std::experimental::string_view, std::experimental::string_view>>;
-
-class Request;
-using Request_ptr = std::unique_ptr<Request>;
-
-class Response;
-using Response_ptr = std::unique_ptr<Response>;
-
-} //< namespace http
-
-#endif //< HTTP_COMMON_HPP
+#endif //< ___HTTP_API___

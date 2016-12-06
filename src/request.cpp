@@ -15,9 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <request.hpp>
-
 #include <http_parser.h>
+#include <request.hpp>
 
 namespace http {
 
@@ -26,10 +25,9 @@ static void configure_settings(http_parser_settings&) noexcept;
 static void execute_parser(Request*, http_parser&, http_parser_settings&, const std::string&) noexcept;
 
 ///////////////////////////////////////////////////////////////////////////////
-Request::Request(std::string request, const Limit limit)
+Request::Request(std::string request, const std::size_t limit)
   : Message{limit}
   , request_{std::move(request)}
-  , field_{nullptr, 0}
 {
   http_parser          parser;
   http_parser_settings settings;
@@ -75,7 +73,7 @@ Request& Request::set_version(const Version& version) noexcept {
 Request& Request::reset() noexcept {
   Message::reset();
   return set_method(GET)
-        .set_uri("/")
+        .set_uri(URI{"/"})
         .set_version(Version{1U, 1U});
 }
 
@@ -96,11 +94,6 @@ Request::operator std::string () const {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-span& Request::field() noexcept {
-  return field_;
-}
-
-///////////////////////////////////////////////////////////////////////////////
 static void configure_settings(http_parser_settings& settings_) noexcept {
   http_parser_settings_init(&settings_);
 
@@ -114,20 +107,19 @@ static void configure_settings(http_parser_settings& settings_) noexcept {
 
   settings_.on_url = [](http_parser* parser, const char* at, size_t length) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->set_uri({at, length});
+    req->set_uri(URI{{at, length}});
     return 0;
   };
 
   settings_.on_header_field = [](http_parser* parser, const char* at, size_t length) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->field().data = at;
-    req->field().len  = length;
+    req->set_private_field(at, length);
     return 0;
   };
 
   settings_.on_header_value = [](http_parser* parser, const char* at, size_t length) {
     auto req = reinterpret_cast<Request*>(parser->data);
-    req->add_header(req->field(), {at, length});
+    req->header().add_field(req->private_field(), {at, length});
     return 0;
   };
 
